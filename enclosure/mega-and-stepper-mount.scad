@@ -1,5 +1,9 @@
 use <board-holder.scad>
 
+module cylinder_outer(height,radius,center=false){
+    fudge = 1/cos(180/inner_fn);
+    cylinder(h=height,r=radius*fudge, center=center);
+}
 
 module MegaFrame() {
     board_dimensions=[
@@ -23,6 +27,19 @@ module MegaFrame() {
         fixing_holes,
         fixing_hole_distance
     );
+
+    screen_pts = [
+        [-8, 2.6 + 9],
+        [14+1.3+50.8+24.1 - 1.5, 2.6 + 9],
+        [14+1.3+50.8+24.1 - 1.5, 2.6 + 9 + 26],
+        [-8, 2.6 + 9 + 26],
+    ];
+    linear_extrude(60) polygon(points=screen_pts);
+
+    pot_pt = [-8, 0, 0];
+
+    translate(pot_pt) cylinder_outer(60, .75);
+    
 }
 
 MegaFrame();
