@@ -40,7 +40,7 @@ module MegaWithLCDFrame(cutouts=false) {
     hole_pts=[
         [14+1.3, 2.5],
         [14+1.3+50.8, 2.5+5.1],
-        [14+1.3+50.8+24.1+10, 2.5],
+        [14+1.3+50.8+24.1+6, 2.5],
         [14+1.3+50.8+24.1, 2.5+5.1+27.9+15.2],
         [14+1.3+50.8, 2.5+5.1+27.9],
         [14+1.3, 2.5+5.1+27.9+15.2],
@@ -132,6 +132,19 @@ transition_floor_tran=[
 ];
 
 translate(transition_floor_tran) cube(transition_floor_dim, center=true);
+
+transition_wedge_dim=[
+    121.5,
+    2,
+    64
+];
+transition_wedge_tran=[
+    0,
+    transition_wedge_dim.y / 2,
+    transition_wedge_dim.z / 2 - 3
+];
+
+translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
 
 int_transition_dim=[
     119.6,
