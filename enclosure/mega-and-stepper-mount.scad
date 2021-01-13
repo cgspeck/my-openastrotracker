@@ -1,7 +1,10 @@
 use <board-holder.scad>
 
-module cylinder_outer(height,radius,center=false){
-    fudge = 1/cos(180/inner_fn);
+fn=72*3;
+$fn=fn;
+
+module cylinder_outer(height,radius,center=false, fn=fn){
+    fudge = 1/cos(180/fn);
     cylinder(h=height,r=radius*fudge, center=center);
 }
 
@@ -11,12 +14,12 @@ module MegaFrame() {
         53.3
     ];
     hole_pts=[
-        [14+1.3, 2.6],
-        [14+1.3+50.8+24.1, 2.6],
-        [14+1.3+50.8, 2.6+15.2],
-        [14+1.3+50.8, 2.6+15.2+27.9],
-        [14+1.3, 2.6+15.2+27.9+5.1],
-        [14+1.3+82, 2.6+15.2+27.9+5.1],
+        [14+1.3, 2.5],
+        [14+1.3+50.8, 2.5+5.1],
+        [14+1.3+50.8+24.1+10, 2.5],
+        [14+1.3+50.8+24.1, 2.5+5.1+27.9+15.2],
+        [14+1.3+50.8, 2.5+5.1+27.9],
+        [14+1.3, 2.5+5.1+27.9+15.2],
     ];
 
     fixing_holes=0;
@@ -29,17 +32,16 @@ module MegaFrame() {
     );
 
     screen_pts = [
-        [-8, 2.6 + 9],
-        [14+1.3+50.8+24.1 - 1.5, 2.6 + 9],
-        [14+1.3+50.8+24.1 - 1.5, 2.6 + 9 + 26],
-        [-8, 2.6 + 9 + 26],
+        [-8, 2.5+5.1+10],
+        [14+1.3+50.8+24.1 - 1.5, 2.5+5.1+10],
+        [14+1.3+50.8+24.1 - 1.5, 2.5+5.1+10 + 26],
+        [-8,  2.5+5.1+10 + 26],
     ];
     linear_extrude(60) polygon(points=screen_pts);
-
-    pot_pt = [-8, 0, 0];
+    pot_pt = [-8, 53.3+1, 0];
 
     translate(pot_pt) cylinder_outer(60, .75);
-    
+
 }
 
 MegaFrame();
