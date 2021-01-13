@@ -3,6 +3,8 @@ use <board-holder.scad>
 fn=72*3;
 $fn=fn;
 
+de_minimus=0.01;
+
 module cylinder_outer(height,radius,center=false, fn=fn){
     fudge = 1/cos(180/fn);
     cylinder(h=height,r=radius*fudge, center=center);
@@ -87,19 +89,36 @@ mega_frame_tran=[
 ];
 
 front_cube_dim=[
-    114,
-    cos(mega_rot) * mega_board_dimensions.y,
+    mega_board_dimensions.x,
+    mega_board_dimensions.y,
     min_thickness
 ];
 front_cube_tran=[
     0,
-    -front_cube_dim.y / 2,
-    0
+    -(cos(mega_rot) * mega_board_dimensions.y) / 2,
+    (sin(mega_rot) * mega_board_dimensions.y) / 2
+];
+translate(mega_frame_tran) rotate([mega_rot,0,0]) MegaWithLCDFrame();
+
+module mega_lower_floor() {
+    translate(front_cube_tran) rotate([mega_rot,0,0]) cube(front_cube_dim, center=true);
+}
+mega_lower_floor();
+
+partial_front_cube_dim=[
+    mega_board_dimensions.x,
+    mega_board_dimensions.y / 4,
+    min_thickness
+];
+partial_front_cube_tran=[
+    0,
+    -(cos(mega_rot) * mega_board_dimensions.y) / 2,
+    (sin(mega_rot) * mega_board_dimensions.y) / 2
 ];
 
-
-translate(mega_frame_tran) rotate([mega_rot,0,0]) MegaWithLCDFrame();
-translate(front_cube_tran) cube(front_cube_dim, center=true);
+module partial_mega_lower_floor() {
+    translate(partial_front_cube_tran) rotate([mega_rot,0,0]) cube(partial_front_cube_dim, center=true);
+}
 
 transition_floor_dim=[
     121.5,
@@ -129,6 +148,26 @@ module int_tran_floor() {
     translate(int_transition_tran) cube(int_transition_dim, center=true);
 }
 
+ext_transition_dim=[
+    114,
+    de_minimus,
+    min_thickness
+];
+ext_transition_tran=[
+    0,
+    - ext_transition_dim.y / 2,
+    0
+];
+
+module ext_tran_floor() {
+    translate(ext_transition_tran) cube(ext_transition_dim, center=true);
+}
+
+ext_tran_floor();
+hull() {
+    ext_tran_floor();
+    mega_lower_floor();
+}
 
 case_front_holes_t_y=2+16;
 case_holes_dx=80;
@@ -151,10 +190,10 @@ module rhs_case_holes(cutouts_only=false, front=true, rear=true) {
         translate(t2) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
     } else {
         if (front) {
-            translate(t2) cylinder_outer(min_thickness, case_hole_dim, center=true);
+            translate(t2) cylinder_outer(min_thickness, case_hole_dim * 2, center=true);
         }
         if (rear) {
-            translate(t1) cylinder_outer(min_thickness, case_hole_dim, center=true);
+            translate(t1) cylinder_outer(min_thickness, case_hole_dim * 2, center=true);
         }
     }
 }
@@ -175,10 +214,10 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
         translate(t2) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
     } else {
         if (front) {
-            translate(t2) cylinder_outer(min_thickness, case_hole_dim, center=true);
+            translate(t2) cylinder_outer(min_thickness, case_hole_dim * 2, center=true);
         }
         if (rear) {
-            translate(t1) cylinder_outer(min_thickness, case_hole_dim, center=true);
+            translate(t1) cylinder_outer(min_thickness, case_hole_dim * 2, center=true);
         }
     }
 }
@@ -202,3 +241,5 @@ difference() {
     lhs_case_holes(true);
     rhs_case_holes(true);
 }
+
+
