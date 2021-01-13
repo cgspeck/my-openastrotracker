@@ -142,13 +142,35 @@ module mega_ext_case(mode="lower_half") {
                 ];
                 translate(frame_tran) MegaWithLCDFrame();
             }
+        } else if (mode=="lower_pad") {
+            rotate([mega_rot,0,0]) translate([
+                0,
+                0,
+                0
+            ]) {
+                cube([
+                    mega_case_dimensions.x,
+                    mega_case_dimensions.y,
+                    de_minimus,
+                ], center=false);
+            }
+        } else if (mode=="int_pad") {
+            rotate([mega_rot,0,0]) translate([
+                0,
+                mega_case_dimensions.y - de_minimus,
+                0
+            ]) {
+                cube([
+                    mega_case_dimensions.x,
+                    de_minimus,
+                    mega_case_dimensions.z
+                ], center=false);
+            }
         }
     }
-
-
-
 }
 mega_ext_case();
+
 mega_lower_floor();
 
 partial_front_cube_dim=[
@@ -225,8 +247,9 @@ module ext_tran_floor() {
 ext_tran_floor();
 hull() {
     ext_tran_floor();
-    mega_lower_floor();
+    mega_ext_case("lower_pad");
 }
+
 
 case_front_holes_t_y=2+16;
 case_holes_dx=80;
