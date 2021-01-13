@@ -32,9 +32,17 @@ mega_board_dimensions=[
     53.3
 ];
 
+mega_and_screen_height=26.1;
+pillar_height=3;
 mega_rot=30;
 
 min_thickness=2.4;
+
+mega_case_dimensions=[
+    mega_board_dimensions.x + 24 + 2 * min_thickness,
+    mega_board_dimensions.y + 10 + min_thickness,
+    mega_and_screen_height + pillar_height + 2 * min_thickness
+];
 
 module MegaWithLCDFrame(cutouts=false) {
     hole_pts=[
@@ -48,8 +56,8 @@ module MegaWithLCDFrame(cutouts=false) {
 
     fixing_holes=0;
     fixing_hole_distance=[10,10];
-    frame_height=6;
-    pillar_height=3;
+    frame_height=0;
+
     frame_total_height=frame_height+pillar_height;
 
     screen_pts = [
@@ -58,7 +66,6 @@ module MegaWithLCDFrame(cutouts=false) {
         [14+1.3+50.8+24.1 - 1.5, 2.5+5.1+10 + 26],
         [-8,  2.5+5.1+10 + 26],
     ];
-    screen_height=26.1;
 
     pot_pt = [-8, 53.3+1, 0];
     translate([-mega_board_dimensions.x/2, -mega_board_dimensions.y/2, 0]) {
@@ -73,8 +80,8 @@ module MegaWithLCDFrame(cutouts=false) {
 
         if (cutouts) {
             translate([0, 0, frame_total_height]) {
-                linear_extrude(screen_height) polygon(points=screen_pts);
-                translate(pot_pt) cylinder_outer(screen_height, .75);
+                linear_extrude(mega_and_screen_height) polygon(points=screen_pts);
+                translate(pot_pt) cylinder_outer(mega_and_screen_height, .75);
             }
         }
     }
@@ -84,7 +91,6 @@ module MegaWithLCDFrame(cutouts=false) {
 mega_frame_tran=[
     0,
     -(cos(mega_rot) * mega_board_dimensions.y) / 2,
-    // Sine = Opposite / Hypotenuse
     (sin(mega_rot) * mega_board_dimensions.y) / 2,
 ];
 
@@ -103,6 +109,46 @@ translate(mega_frame_tran) rotate([mega_rot,0,0]) MegaWithLCDFrame();
 module mega_lower_floor() {
     translate(front_cube_tran) rotate([mega_rot,0,0]) cube(front_cube_dim, center=true);
 }
+
+module mega_ext_case(mode="lower_half") {
+    mega_frame_tran=[
+        -mega_case_dimensions.x/2,
+        -(cos(mega_rot) * mega_case_dimensions.y),
+        (sin(mega_rot) * mega_case_dimensions.y) - mega_case_dimensions.z,
+    ];
+    translate(mega_frame_tran) {
+        if (mode=="lower_half") {
+            rotate([mega_rot,0,0]) translate([
+                0,
+                0,
+                0
+            ]) {
+                difference() {
+                    cube(mega_case_dimensions, center=false);
+                    translate([
+                        min_thickness,
+                        min_thickness,
+                        min_thickness
+                    ]) cube([
+                        mega_case_dimensions.x - 2*min_thickness,
+                        mega_case_dimensions.y - 2*min_thickness,
+                        mega_case_dimensions.z - min_thickness,
+                    ], center=false);
+                }
+                frame_tran = [
+                    mega_board_dimensions.x / 2,
+                    mega_board_dimensions.y / 2 + 2.4 + 2.5,
+                    2.4
+                ];
+                translate(frame_tran) MegaWithLCDFrame();
+            }
+        }
+    }
+
+
+
+}
+mega_ext_case();
 mega_lower_floor();
 
 partial_front_cube_dim=[
