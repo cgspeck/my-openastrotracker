@@ -114,12 +114,28 @@ transition_floor_tran=[
 
 translate(transition_floor_tran) cube(transition_floor_dim, center=true);
 
+int_transition_dim=[
+    119.6,
+    2,
+    min_thickness
+];
+int_transition_tran=[
+    0,
+    int_transition_dim.y + transition_floor_dim.y / 2,
+    0
+];
+
+module int_tran_floor() {
+    translate(int_transition_tran) cube(int_transition_dim, center=true);
+}
+
+
 case_front_holes_t_y=2+16;
 case_holes_dx=80;
 case_rear_holes_t_y=2+16+60;
 case_hole_dim=2;
 
-module rhs_case_holes(cutouts_only=false) {
+module rhs_case_holes(cutouts_only=false, front=true, rear=true) {
     t1 = [
         case_holes_dx/2,
         case_rear_holes_t_y,
@@ -134,12 +150,16 @@ module rhs_case_holes(cutouts_only=false) {
         translate(t1) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
         translate(t2) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
     } else {
-        translate(t1) cylinder_outer(min_thickness, case_hole_dim, center=true);
-        translate(t2) cylinder_outer(min_thickness, case_hole_dim, center=true);
+        if (front) {
+            translate(t2) cylinder_outer(min_thickness, case_hole_dim, center=true);
+        }
+        if (rear) {
+            translate(t1) cylinder_outer(min_thickness, case_hole_dim, center=true);
+        }
     }
 }
 
-module lhs_case_holes(cutouts_only=false) {
+module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
     t1 = [
         -case_holes_dx/2,
         case_rear_holes_t_y,
@@ -154,22 +174,31 @@ module lhs_case_holes(cutouts_only=false) {
         translate(t1) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
         translate(t2) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
     } else {
-        translate(t1) cylinder_outer(min_thickness, case_hole_dim, center=true);
-        translate(t2) cylinder_outer(min_thickness, case_hole_dim, center=true);
+        if (front) {
+            translate(t2) cylinder_outer(min_thickness, case_hole_dim, center=true);
+        }
+        if (rear) {
+            translate(t1) cylinder_outer(min_thickness, case_hole_dim, center=true);
+        }
     }
 }
 
 difference() {
-    multiHull() {
-        rhs_case_holes();
-    }
-    rhs_case_holes(true);
-}
+    union() {
+        multiHull() {
+            rhs_case_holes();
+        }
 
-difference() {
-    multiHull() {
-        lhs_case_holes();
+        multiHull() {
+            lhs_case_holes();
+        }
+
+        multiHull() {
+            int_tran_floor();
+            rhs_case_holes(rear=false);
+            lhs_case_holes(rear=false);
+        }
     }
     lhs_case_holes(true);
+    rhs_case_holes(true);
 }
-
