@@ -44,6 +44,17 @@ mega_case_dimensions=[
     mega_and_screen_height + pillar_height + 2 * min_thickness
 ];
 
+ext_transition_dim=[
+    114,
+    1.5,
+    57
+];
+ext_transition_tran=[
+    0,
+    - ext_transition_dim.y / 2,
+    57 / 2
+];
+
 module MegaWithLCDFrame(cutouts=false) {
     hole_pts=[
         [14+1.3, 2.54],
@@ -68,7 +79,11 @@ module MegaWithLCDFrame(cutouts=false) {
     ];
 
     pot_pt = [-8, 53.3+1, 0];
-    translate([-mega_board_dimensions.x/2, -mega_board_dimensions.y/2, 0]) {
+    translate([
+        -mega_board_dimensions.x/2,
+        -mega_board_dimensions.y/2,
+        0
+        ]) {
         BoardHolder6Pt(
             mega_board_dimensions,
             hole_pts,
@@ -88,12 +103,6 @@ module MegaWithLCDFrame(cutouts=false) {
 
 }
 
-mega_frame_tran=[
-    0,
-    -(cos(mega_rot) * mega_board_dimensions.y) / 2,
-    (sin(mega_rot) * mega_board_dimensions.y) / 2,
-];
-
 front_cube_dim=[
     mega_board_dimensions.x,
     mega_board_dimensions.y,
@@ -104,25 +113,33 @@ front_cube_tran=[
     -(cos(mega_rot) * mega_board_dimensions.y) / 2,
     (sin(mega_rot) * mega_board_dimensions.y) / 2
 ];
-translate(mega_frame_tran) rotate([mega_rot,0,0]) MegaWithLCDFrame();
+
 
 module mega_lower_floor() {
     translate(front_cube_tran) rotate([mega_rot,0,0]) cube(front_cube_dim, center=true);
 }
 
 module mega_ext_case(mode="lower_half") {
-    mega_frame_tran=[
+    mega_case_tran=[
         -mega_case_dimensions.x/2,
-        -(cos(mega_rot) * mega_case_dimensions.y),
-        (sin(mega_rot) * mega_case_dimensions.y) - mega_case_dimensions.z,
+        -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness),
+        (sin(mega_rot) * mega_case_dimensions.y + 0.75 * min_thickness) - mega_case_dimensions.z,
     ];
-    translate(mega_frame_tran) {
+
+    case_position_tran=[
+        0,
+        -ext_transition_dim.y,
+        0
+    ];
+
+    case_rot=[
+        mega_rot,
+        0,
+        0
+    ];
+    translate(mega_case_tran) {
         if (mode=="lower_half") {
-            rotate([mega_rot,0,0]) translate([
-                0,
-                0,
-                0
-            ]) {
+            rotate(case_rot) translate(case_position_tran) {
                 difference() {
                     cube(mega_case_dimensions, center=false);
                     translate([
@@ -143,11 +160,7 @@ module mega_ext_case(mode="lower_half") {
                 translate(frame_tran) MegaWithLCDFrame();
             }
         } else if (mode=="lower_pad") {
-            rotate([mega_rot,0,0]) translate([
-                0,
-                0,
-                0
-            ]) {
+            rotate(case_rot) translate(case_position_tran) {
                 cube([
                     mega_case_dimensions.x,
                     mega_case_dimensions.y,
@@ -155,7 +168,7 @@ module mega_ext_case(mode="lower_half") {
                 ], center=false);
             }
         } else if (mode=="int_pad") {
-            rotate([mega_rot,0,0]) translate([
+            rotate(case_rot) translate([
                 0,
                 mega_case_dimensions.y - de_minimus,
                 0
@@ -166,27 +179,22 @@ module mega_ext_case(mode="lower_half") {
                     mega_case_dimensions.z
                 ], center=false);
             }
+        } else if (mode =="internal_area") {
+            rotate(case_rot) translate(case_position_tran) {
+                    translate([
+                        min_thickness,
+                        min_thickness,
+                        min_thickness
+                    ]) cube([
+                        mega_case_dimensions.x - 2*min_thickness,
+                        mega_case_dimensions.y - 2*min_thickness,
+                        mega_case_dimensions.z - min_thickness,
+                    ], center=false);
+            }
         }
     }
 }
 mega_ext_case();
-
-mega_lower_floor();
-
-partial_front_cube_dim=[
-    mega_board_dimensions.x,
-    mega_board_dimensions.y / 4,
-    min_thickness
-];
-partial_front_cube_tran=[
-    0,
-    -(cos(mega_rot) * mega_board_dimensions.y) / 2,
-    (sin(mega_rot) * mega_board_dimensions.y) / 2
-];
-
-module partial_mega_lower_floor() {
-    translate(partial_front_cube_tran) rotate([mega_rot,0,0]) cube(partial_front_cube_dim, center=true);
-}
 
 transition_floor_dim=[
     121.5,
@@ -222,34 +230,39 @@ int_transition_dim=[
 int_transition_tran=[
     0,
     int_transition_dim.y + transition_floor_dim.y / 2,
-    0
+    min_thickness / 2
 ];
 
 module int_tran_floor() {
     translate(int_transition_tran) cube(int_transition_dim, center=true);
 }
 
-ext_transition_dim=[
-    114,
-    de_minimus,
-    min_thickness
-];
-ext_transition_tran=[
-    0,
-    - ext_transition_dim.y / 2,
-    0
-];
-
-module ext_tran_floor() {
+module ext_tran_shield() {
     translate(ext_transition_tran) cube(ext_transition_dim, center=true);
 }
 
-ext_tran_floor();
-hull() {
-    ext_tran_floor();
-    mega_ext_case("lower_pad");
+module ext_tran_pad() {
+    translate([
+        ext_transition_tran.x,
+        ext_transition_tran.y - ext_transition_dim.y / 2 + de_minimus / 2,
+        ext_transition_tran.z
+    ]) cube([
+        ext_transition_dim.x,
+        de_minimus,
+        ext_transition_dim.z,
+    ], center=true);
 }
 
+ext_tran_shield();
+
+difference() {
+    hull() {
+        ext_tran_pad();
+        mega_ext_case("lower_half");
+        // mega_ext_case("int_pad");
+    }
+    mega_ext_case("internal_area");
+}
 
 case_front_holes_t_y=2+16;
 case_holes_dx=80;
@@ -260,12 +273,12 @@ module rhs_case_holes(cutouts_only=false, front=true, rear=true) {
     t1 = [
         case_holes_dx/2,
         case_rear_holes_t_y,
-        0
+        min_thickness / 2
     ];
     t2 = [
         case_holes_dx/2,
         case_front_holes_t_y,
-        0
+        min_thickness / 2
     ];
     if (cutouts_only) {
         translate(t1) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
@@ -284,12 +297,12 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
     t1 = [
         -case_holes_dx/2,
         case_rear_holes_t_y,
-        0
+        min_thickness / 2
     ];
     t2 = [
         -case_holes_dx/2,
         case_front_holes_t_y,
-        0
+        min_thickness / 2
     ];
     if (cutouts_only) {
         translate(t1) cylinder_outer(min_thickness, case_hole_dim/2, center=true);
