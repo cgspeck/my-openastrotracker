@@ -122,18 +122,34 @@ module mega_lower_floor() {
 }
 
 push_fit_tab_width=2;
+push_fit_tab_height=10;
 
 module push_fit_tab() {
     z = 10;
+    // translate([
+    //     0,
+    //     0,
+    //     z / 2
+    // ]) cube([
+    //     push_fit_tab_width,
+    //     10,
+    //     z
+    // ], center=true);
+
+    xy_pts = [
+        [0,0],
+        [push_fit_tab_width, 0],
+        [push_fit_tab_width, push_fit_tab_height],
+        [-1.5, push_fit_tab_height-3.5],
+        [0, push_fit_tab_height-3.5],
+    ];
+    echo(xy_pts);
+
     translate([
         0,
-        0,
-        z / 2
-    ]) cube([
-        push_fit_tab_width,
-        10,
-        z
-    ], center=true);
+        z / 2,
+        0
+    ]) rotate([90,0,0]) linear_extrude(z) polygon(points=xy_pts);
 }
 
 module mega_ext_case(mode="lower_half") {
@@ -214,17 +230,21 @@ module mega_ext_case(mode="lower_half") {
                 mega_case_dimensions.y,
                 lid_thickness
             ], corner_rad, true);
-            // fit tabs
-            // translate([
-            //     - mega_case_dimensions.x / 2,
-            //     mega_case_dimensions.x,
-            //     0
-            // ]) push_fit_tab();
             translate([
-                -mega_case_dimensions.x  / 2 + min_thickness + push_fit_tab_width / 2 + clearance_loose,
+                -mega_case_dimensions.x  / 2 + min_thickness + clearance_loose,
                 0,
                 lid_thickness/2
             ]) push_fit_tab();
+            translate([
+                mega_case_dimensions.x  / 2 - min_thickness - clearance_loose,
+                0,
+                lid_thickness/2
+            ]) rotate([0,0,180]) push_fit_tab();
+            translate([
+                0,
+                -mega_case_dimensions.y  / 2 + min_thickness + clearance_loose,
+                lid_thickness/2
+            ]) rotate([0,0,90]) push_fit_tab();
             // lugs
             lug_height=3;
             lug_xy=10;
