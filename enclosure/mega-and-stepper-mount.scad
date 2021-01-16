@@ -182,24 +182,26 @@ module mega_ext_case(mode="lower_half") {
                         internal_dim.y / 2 + min_thickness,
                         internal_dim.z / 2 + min_thickness
                     ]) roundedBox(internal_dim, corner_rad, true);
-                    // 
-                    /* 
+                    //
+                    /*
                     push-fit tab holes
                     z = 10;
                     push_fit_tab_width=2;
                     push_fit_tab_height=10;
                     3.5
                     */
+                    push_fit_tab_z_tran=mega_case_dimensions.z - 10 + clearance_loose;
+                    push_fit_tab_z_dim=3.5 + clearance_loose;
                     translate([
                         -30,
                         mega_case_dimensions.y /2 - 5 - clearance_loose,
-                        mega_case_dimensions.z - 10 - 3.5 - clearance_loose
-                    ]) cube([200, 10 + 2*clearance_loose, 3.5 + clearance_loose], center=false);
+                        push_fit_tab_z_tran
+                    ]) cube([200, 10 + 2*clearance_loose, push_fit_tab_z_dim], center=false);
                     translate([
                         mega_case_dimensions.x / 2 - 5 - clearance_loose,
                         -10,
-                        mega_case_dimensions.z - 10 - 3.5 - clearance_loose
-                    ]) cube([10, 30 + 2*clearance_loose, 3.5 + clearance_loose], center=false);
+                        push_fit_tab_z_tran
+                    ]) cube([10, 30 + 2*clearance_loose, push_fit_tab_z_dim], center=false);
                 }
                 frame_tran = [
                     mega_board_dimensions.x / 2 + 15,
@@ -560,5 +562,5 @@ difference() {
         mega_case_rot.z
     ]) mega_ext_case();
 
-    mega_ext_case("lid");   
+    mega_ext_case("lid");
 }
