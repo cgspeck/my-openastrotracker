@@ -4,6 +4,8 @@ fn=72*3;
 $fn=fn;
 
 de_minimus=0.01;
+clearance_loose=0.4;
+clearance_tight=0.2;
 
 module cylinder_outer(height,radius,center=false, fn=fn){
     fudge = 1/cos(180/fn);
@@ -189,6 +191,86 @@ module mega_ext_case(mode="lower_half") {
     }
 }
 
+module 40mm_fan_cutout(length=10) {
+    holes_dz=32;
+    holes_dx=32;
+    holes_dia=4 + clearance_loose;
+
+    fan_max_dia=38;
+    fan_min_dia=12;
+
+    rot =[
+        90,
+        0,
+        0
+    ];
+
+    translate([
+        0,
+        length/2,
+        0
+    ]) {
+        translate([
+            0,
+            0,
+            holes_dz / 2
+        ]) {
+            translate([
+                holes_dx / 2,
+                0,
+                0
+            ]) rotate(rot) cylinder_outer(length, holes_dia/2);
+            translate([
+                -holes_dx / 2,
+                0,
+                0
+            ]) rotate(rot) cylinder_outer(length, holes_dia/2);
+        }
+
+        translate([
+            0,
+            0,
+            -holes_dz / 2
+        ]) {
+            translate([
+                holes_dx / 2,
+                0,
+                0
+            ]) rotate(rot) cylinder_outer(length, holes_dia/2);
+            translate([
+                -holes_dx / 2,
+                0,
+                0
+            ]) rotate(rot) cylinder_outer(length, holes_dia/2);
+        }
+
+        difference() {
+            rotate(rot) cylinder_outer(length, fan_max_dia/2);
+            rotate(rot) cylinder_outer(length, fan_min_dia/2);
+
+            segments = 8;
+            rot_fact = 360 / segments;
+            translate([
+                0,
+                -length / 2,
+                0
+            ]) for (i=[0:segments-1]) {
+                echo(str("i =", i));
+                echo(str("rot_fact * i =", rot_fact * i));
+                rotate([
+                    0,
+                    rot_fact * i,
+                    0
+                ]) cube([
+                    min_thickness,
+                    length,
+                    40
+                ], center=true);
+            }
+
+        }
+    }
+}
 
 transition_floor_dim=[
     121.5,
@@ -271,6 +353,13 @@ difference() {
         0,
         0
     ]) cylinder_outer(90, 11);
+    // fan mount
+
+    translate([
+        -25,
+        0,
+        35
+    ]) 40mm_fan_cutout();
 }
 
 
