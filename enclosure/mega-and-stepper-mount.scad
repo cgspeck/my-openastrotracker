@@ -192,9 +192,45 @@ module mega_ext_case(mode="lower_half") {
                         mega_case_dimensions.z - min_thickness,
                     ], center=false);
             }
+        } else if (mode=="lid") {
+            roundedBox([
+                mega_case_dimensions.x,
+                mega_case_dimensions.y,
+                min_thickness
+            ], corner_rad, true);
+            // lugs
+            lug_height=3;
+            lug_xy=10;
+            translate([
+                0,
+                0,
+                lug_height
+            ]) difference() {
+                    roundedBox([
+                    mega_case_dimensions.x - 2 * min_thickness - clearance_loose * 2,
+                    mega_case_dimensions.y - 2 * min_thickness - clearance_loose * 2,
+                    lug_height
+                ], corner_rad, true);
+                cube([
+                    mega_case_dimensions.x - lug_xy * 2,
+                    mega_case_dimensions.y,
+                    lug_height
+                ], center=true);
+                cube([
+                    mega_case_dimensions.x,
+                    mega_case_dimensions.y- lug_xy * 2,
+                    lug_height
+                ], center=true);
+            }
         }
     }
 }
+
+translate([
+    65,
+    -50,
+    0
+]) mega_ext_case("lid");
 
 module 40mm_fan_cutout(length=10) {
     holes_dz=32;
