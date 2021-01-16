@@ -104,7 +104,7 @@ module MegaWithLCDFrame(cutouts=false) {
         if (cutouts) {
             translate([0, 0, frame_total_height]) {
                 linear_extrude(mega_and_screen_height) polygon(points=screen_pts);
-                translate(pot_pt) cylinder_outer(mega_and_screen_height, .75);
+                translate(pot_pt) cylinder_outer(mega_and_screen_height, 1.5);
             }
         }
     }
@@ -162,6 +162,13 @@ module mega_ext_case(mode="lower_half") {
     ];
 
     corner_rad=3;
+
+    frame_tran = [
+        mega_board_dimensions.x / 2 + 15,
+        mega_board_dimensions.y / 2 + 2.4 + 5,
+        2.3
+    ];
+
     translate(mega_case_tran) {
         if (mode=="lower_half") {
             rotate(mega_case_rot) translate(case_position_tran) {
@@ -203,11 +210,6 @@ module mega_ext_case(mode="lower_half") {
                         push_fit_tab_z_tran
                     ]) cube([10, 30 + 2*clearance_loose, push_fit_tab_z_dim], center=false);
                 }
-                frame_tran = [
-                    mega_board_dimensions.x / 2 + 15,
-                    mega_board_dimensions.y / 2 + 2.4 + 5,
-                    2.3
-                ];
                 translate(frame_tran) MegaWithLCDFrame();
             }
         } else if (mode=="pad") {
@@ -236,58 +238,63 @@ module mega_ext_case(mode="lower_half") {
                     ], center=false);
             }
         } else if (mode=="lid") {
-            lid_thickness=min_thickness;
             difference() {
-                roundedBox([
-                    mega_case_dimensions.x,
-                    mega_case_dimensions.y,
-                    lid_thickness
-                ], corner_rad, true);
-                roundedBox([
-                    mega_case_dimensions.x - 20,
-                    mega_case_dimensions.y - 20,
-                    lid_thickness
-                ], corner_rad, true);
-
-            }
-            translate([
-                -mega_case_dimensions.x  / 2 + min_thickness + clearance_loose,
-                0,
-                lid_thickness/2
-            ]) push_fit_tab();
-            translate([
-                mega_case_dimensions.x  / 2 - min_thickness - clearance_loose,
-                0,
-                lid_thickness/2
-            ]) rotate([0,0,180]) push_fit_tab();
-            translate([
-                0,
-                -mega_case_dimensions.y  / 2 + min_thickness + clearance_loose,
-                lid_thickness/2
-            ]) rotate([0,0,90]) push_fit_tab();
-            // lugs
-            lug_height=3;
-            lug_xy=10;
-            translate([
-                0,
-                0,
-                2
-            ]) difference() {
-                    roundedBox([
-                    mega_case_dimensions.x - 2 * min_thickness - clearance_loose * 2,
-                    mega_case_dimensions.y - 2 * min_thickness - clearance_loose * 2,
-                    lug_height
-                ], corner_rad, true);
-                cube([
-                    mega_case_dimensions.x - lug_xy * 2,
-                    mega_case_dimensions.y,
-                    lug_height
-                ], center=true);
-                cube([
-                    mega_case_dimensions.x,
-                    mega_case_dimensions.y- lug_xy * 2,
-                    lug_height
-                ], center=true);
+                union() {
+                    lid_thickness=min_thickness;
+                    // union() {
+                        roundedBox([
+                            mega_case_dimensions.x,
+                            mega_case_dimensions.y,
+                            lid_thickness
+                        ], corner_rad, true);
+                        // roundedBox([
+                        //     mega_case_dimensions.x - 20,
+                        //     mega_case_dimensions.y - 20,
+                        //     lid_thickness
+                        // ], corner_rad, true);
+                    // }
+                    translate([
+                        -mega_case_dimensions.x  / 2 + min_thickness + clearance_loose,
+                        0,
+                        lid_thickness/2
+                    ]) push_fit_tab();
+                    translate([
+                        mega_case_dimensions.x  / 2 - min_thickness - clearance_loose,
+                        0,
+                        lid_thickness/2
+                    ]) rotate([0,0,180]) push_fit_tab();
+                    translate([
+                        0,
+                        -mega_case_dimensions.y  / 2 + min_thickness + clearance_loose,
+                        lid_thickness/2
+                    ]) rotate([0,0,90]) push_fit_tab();
+                    // lugs
+                    lug_height=3;
+                    lug_xy=10;
+                    translate([
+                        0,
+                        0,
+                        2.6
+                    ]) difference() {
+                            roundedBox([
+                            mega_case_dimensions.x - 2 * min_thickness - clearance_loose * 2,
+                            mega_case_dimensions.y - 2 * min_thickness - clearance_loose * 2,
+                            lug_height
+                        ], corner_rad, true);
+                        cube([
+                            mega_case_dimensions.x - lug_xy * 2,
+                            mega_case_dimensions.y,
+                            lug_height
+                        ], center=true);
+                        cube([
+                            mega_case_dimensions.x,
+                            mega_case_dimensions.y- lug_xy * 2,
+                            lug_height
+                        ], center=true);
+                    }
+                }
+            // the mega screen and brightness adjuster
+            translate([0,0,25]) mirror([0,0,0]) rotate([0,180,0]) MegaWithLCDFrame(cutouts=true);
             }
         }
     }
@@ -545,22 +552,14 @@ difference() {
 }
 
 
-// !projection(true) translate([
-//     0,
-//     0,
-//     -45
-// ]) rotate([
-//     -mega_case_rot.x,
-//     mega_case_rot.y,
-//     mega_case_rot.z
-// ]) mega_ext_case();
+// !union() {
+//     rotate([
+//         -mega_case_rot.x,
+//         mega_case_rot.y,
+//         mega_case_rot.z
+//     ]) mega_ext_case();
 
-!union() {
-    rotate([
-        -mega_case_rot.x,
-        mega_case_rot.y,
-        mega_case_rot.z
-    ]) mega_ext_case();
+//     mega_ext_case("lid");
+// }
 
-    mega_ext_case("lid");
-}
+!mega_ext_case("lid");
