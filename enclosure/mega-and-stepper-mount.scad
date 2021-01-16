@@ -121,6 +121,21 @@ module mega_lower_floor() {
     translate(front_cube_tran) rotate([mega_rot,0,0]) cube(front_cube_dim, center=true);
 }
 
+push_fit_tab_width=2;
+
+module push_fit_tab() {
+    z = 10;
+    translate([
+        0,
+        0,
+        z / 2
+    ]) cube([
+        push_fit_tab_width,
+        10,
+        z
+    ], center=true);
+}
+
 module mega_ext_case(mode="lower_half") {
     mega_case_tran=[
         -mega_case_dimensions.x/2,
@@ -193,11 +208,23 @@ module mega_ext_case(mode="lower_half") {
                     ], center=false);
             }
         } else if (mode=="lid") {
+            lid_thickness=min_thickness;
             roundedBox([
                 mega_case_dimensions.x,
                 mega_case_dimensions.y,
-                min_thickness
+                lid_thickness
             ], corner_rad, true);
+            // fit tabs
+            // translate([
+            //     - mega_case_dimensions.x / 2,
+            //     mega_case_dimensions.x,
+            //     0
+            // ]) push_fit_tab();
+            translate([
+                -mega_case_dimensions.x  / 2 + min_thickness + push_fit_tab_width / 2 + clearance_loose,
+                0,
+                lid_thickness/2
+            ]) push_fit_tab();
             // lugs
             lug_height=3;
             lug_xy=10;
