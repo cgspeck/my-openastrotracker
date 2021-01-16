@@ -46,6 +46,12 @@ mega_case_dimensions=[
     mega_and_screen_height + pillar_height + 2 * min_thickness
 ];
 
+mega_case_rot=[
+    mega_rot,
+    0,
+    0
+];
+
 ext_transition_dim=[
     114,
     1.5,
@@ -126,16 +132,6 @@ push_fit_tab_height=10;
 
 module push_fit_tab() {
     z = 10;
-    // translate([
-    //     0,
-    //     0,
-    //     z / 2
-    // ]) cube([
-    //     push_fit_tab_width,
-    //     10,
-    //     z
-    // ], center=true);
-
     xy_pts = [
         [0,0],
         [push_fit_tab_width, 0],
@@ -165,21 +161,17 @@ module mega_ext_case(mode="lower_half") {
         0
     ];
 
-    case_rot=[
-        mega_rot,
-        0,
-        0
-    ];
     corner_rad=3;
     translate(mega_case_tran) {
         if (mode=="lower_half") {
-            rotate(case_rot) translate(case_position_tran) {
+            rotate(mega_case_rot) translate(case_position_tran) {
                 difference() {
                     translate([
                         mega_case_dimensions.x / 2,
                         mega_case_dimensions.y / 2,
                         mega_case_dimensions.z / 2
                     ]) roundedBox(mega_case_dimensions, corner_rad, true);
+                    echo("mega_case_dimensions", mega_case_dimensions);
                     internal_dim = [
                         mega_case_dimensions.x - 2*min_thickness,
                         mega_case_dimensions.y - 2*min_thickness,
@@ -192,14 +184,14 @@ module mega_ext_case(mode="lower_half") {
                     ]) roundedBox(internal_dim, corner_rad, true);
                 }
                 frame_tran = [
-                    mega_board_dimensions.x / 2,
+                    mega_board_dimensions.x / 2 + 15,
                     mega_board_dimensions.y / 2 + 2.4 + 2.5,
                     2.4
                 ];
                 translate(frame_tran) MegaWithLCDFrame();
             }
         } else if (mode=="pad") {
-            rotate(case_rot) translate(case_position_tran) {
+            rotate(mega_case_rot) translate(case_position_tran) {
                 mating_x = 60;
                 translate([
                     (mega_case_dimensions.x * 2 - mating_x)  / 2,
@@ -212,7 +204,7 @@ module mega_ext_case(mode="lower_half") {
                 ], corner_rad, true);
             }
         } else if (mode =="internal_area") {
-            rotate(case_rot) translate(case_position_tran) {
+            rotate(mega_case_rot) translate(case_position_tran) {
                     translate([
                         min_thickness,
                         min_thickness,
@@ -525,3 +517,18 @@ difference() {
 }
 
 
+// !projection(true) translate([
+//     0,
+//     0,
+//     -45
+// ]) rotate([
+//     -mega_case_rot.x,
+//     mega_case_rot.y,
+//     mega_case_rot.z
+// ]) mega_ext_case();
+
+!rotate([
+    -mega_case_rot.x,
+    mega_case_rot.y,
+    mega_case_rot.z
+]) mega_ext_case();
