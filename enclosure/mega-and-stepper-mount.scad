@@ -63,6 +63,45 @@ ext_transition_tran=[
     57 / 2
 ];
 
+module LCDButtonCutouts(mode="cutouts", z=5) {
+    pts = [
+        [0, 0],
+        [8, 0],
+        [17, 3.5],
+        [17, -3.5],
+        [26, 0],
+        [34, 0],
+    ];
+
+    hole_dia=5.2;
+    guide_dia=hole_dia + 2.4;
+
+
+    translate([
+        -17,
+        0,
+        0
+    ]) {
+        for (i=pts) {
+            if (mode=="cutouts") {
+                translate([
+                    i.x,
+                    i.y,
+                    0
+                ]) cylinder_outer(z, hole_dia/2);
+            }
+            if (mode=="guides") {
+                translate([
+                    i.x,
+                    i.y,
+                    0
+                ]) cylinder_outer(z, guide_dia/2);
+            }
+        }
+    }
+
+}
+
 module MegaWithLCDFrame(cutouts=false) {
     hole_pts=[
         [13.97, 2.54],
@@ -98,7 +137,8 @@ module MegaWithLCDFrame(cutouts=false) {
             fixing_holes,
             fixing_hole_distance,
             frame_height=frame_height,
-            pillar_height=pillar_height
+            pillar_height=pillar_height,
+            mount_4_type="post"
         );
 
         if (cutouts) {
@@ -238,6 +278,11 @@ module mega_ext_case(mode="lower_half") {
                     ], center=false);
             }
         } else if (mode=="lid") {
+            button_tran_xy = [
+                42,-20
+            ];
+            button_through_z=20;
+            button_guide_z=5;
             difference() {
                 union() {
                     lid_thickness=min_thickness;
@@ -292,9 +337,22 @@ module mega_ext_case(mode="lower_half") {
                             lug_height
                         ], center=true);
                     }
+                    // button guides
+                    // button cutouts
+                    translate([
+                        button_tran_xy.x,
+                        button_tran_xy.y,
+                        -min_thickness / 2 + min_thickness - de_minimus
+                    ]) LCDButtonCutouts("guides", z=button_guide_z);
                 }
             // the mega screen and brightness adjuster
             translate([0,0,25]) mirror([0,0,0]) rotate([0,180,0]) MegaWithLCDFrame(cutouts=true);
+            // button cutouts
+            translate([
+                button_tran_xy.x,
+                button_tran_xy.y,
+                -min_thickness - 3
+            ]) LCDButtonCutouts(z=button_through_z);
             }
         }
     }
@@ -552,14 +610,14 @@ difference() {
 }
 
 
-// !union() {
-//     rotate([
-//         -mega_case_rot.x,
-//         mega_case_rot.y,
-//         mega_case_rot.z
-//     ]) mega_ext_case();
+!union() {
+    rotate([
+        -mega_case_rot.x,
+        mega_case_rot.y,
+        mega_case_rot.z
+    ]) mega_ext_case();
 
-//     mega_ext_case("lid");
-// }
+    mega_ext_case("lid");
+}
 
-!mega_ext_case("lid");
+// mega_ext_case("lid");
