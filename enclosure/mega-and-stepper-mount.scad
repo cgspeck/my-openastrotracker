@@ -42,7 +42,7 @@ min_thickness=2.4;
 
 mega_case_dimensions=[
     mega_board_dimensions.x + 24 + 2 * min_thickness,
-    mega_board_dimensions.y + 10 + min_thickness,
+    mega_board_dimensions.y + 20 + min_thickness,
     mega_and_screen_height + pillar_height + 2 * min_thickness
 ];
 
@@ -182,10 +182,28 @@ module mega_ext_case(mode="lower_half") {
                         internal_dim.y / 2 + min_thickness,
                         internal_dim.z / 2 + min_thickness
                     ]) roundedBox(internal_dim, corner_rad, true);
+                    // 
+                    /* 
+                    push-fit tab holes
+                    z = 10;
+                    push_fit_tab_width=2;
+                    push_fit_tab_height=10;
+                    3.5
+                    */
+                    translate([
+                        -30,
+                        mega_case_dimensions.y /2 - 5 - clearance_loose,
+                        mega_case_dimensions.z - 10 - 3.5 - clearance_loose
+                    ]) cube([200, 10 + 2*clearance_loose, 3.5 + clearance_loose], center=false);
+                    translate([
+                        mega_case_dimensions.x / 2 - 5 - clearance_loose,
+                        -10,
+                        mega_case_dimensions.z - 10 - 3.5 - clearance_loose
+                    ]) cube([10, 30 + 2*clearance_loose, 3.5 + clearance_loose], center=false);
                 }
                 frame_tran = [
                     mega_board_dimensions.x / 2 + 15,
-                    mega_board_dimensions.y / 2 + 2.4 + 2.5,
+                    mega_board_dimensions.y / 2 + 2.4 + 5,
                     2.4
                 ];
                 translate(frame_tran) MegaWithLCDFrame();
@@ -217,11 +235,19 @@ module mega_ext_case(mode="lower_half") {
             }
         } else if (mode=="lid") {
             lid_thickness=min_thickness;
-            roundedBox([
-                mega_case_dimensions.x,
-                mega_case_dimensions.y,
-                lid_thickness
-            ], corner_rad, true);
+            difference() {
+                roundedBox([
+                    mega_case_dimensions.x,
+                    mega_case_dimensions.y,
+                    lid_thickness
+                ], corner_rad, true);
+                roundedBox([
+                    mega_case_dimensions.x - 20,
+                    mega_case_dimensions.y - 20,
+                    lid_thickness
+                ], corner_rad, true);
+
+            }
             translate([
                 -mega_case_dimensions.x  / 2 + min_thickness + clearance_loose,
                 0,
@@ -527,8 +553,12 @@ difference() {
 //     mega_case_rot.z
 // ]) mega_ext_case();
 
-!rotate([
-    -mega_case_rot.x,
-    mega_case_rot.y,
-    mega_case_rot.z
-]) mega_ext_case();
+!union() {
+    rotate([
+        -mega_case_rot.x,
+        mega_case_rot.y,
+        mega_case_rot.z
+    ]) mega_ext_case();
+
+    mega_ext_case("lid");   
+}
