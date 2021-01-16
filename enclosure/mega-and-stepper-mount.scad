@@ -171,16 +171,14 @@ module mega_ext_case(mode="lower_half") {
             rotate(case_rot) translate(case_position_tran) {
                 mating_x = 60;
                 translate([
-                    mega_case_dimensions.x - mating_x,
-                    corner_rad,
-                    0
-                ]) {
-                    cube([
-                        mating_x,
-                        mega_case_dimensions.y - corner_rad,
-                        mega_case_dimensions.z
-                    ], center=false);
-                }
+                    (mega_case_dimensions.x * 2 - mating_x)  / 2,
+                    mega_case_dimensions.y / 2,
+                    mega_case_dimensions.z / 2
+                ]) roundedBox([
+                    mating_x,
+                    mega_case_dimensions.y,
+                    mega_case_dimensions.z
+                ], corner_rad, true);
             }
         } else if (mode =="internal_area") {
             rotate(case_rot) translate(case_position_tran) {
