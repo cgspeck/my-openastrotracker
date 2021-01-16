@@ -204,7 +204,7 @@ module mega_ext_case(mode="lower_half") {
                 frame_tran = [
                     mega_board_dimensions.x / 2 + 15,
                     mega_board_dimensions.y / 2 + 2.4 + 5,
-                    2.4
+                    2.3
                 ];
                 translate(frame_tran) MegaWithLCDFrame();
             }
@@ -269,7 +269,7 @@ module mega_ext_case(mode="lower_half") {
             translate([
                 0,
                 0,
-                lug_height
+                2
             ]) difference() {
                     roundedBox([
                     mega_case_dimensions.x - 2 * min_thickness - clearance_loose * 2,
