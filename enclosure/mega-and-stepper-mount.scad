@@ -26,7 +26,6 @@ module multiHull(){
     }
 }
 
-
 mega_board_dimensions=[
     101.6,
     53.3
@@ -122,7 +121,7 @@ module mega_lower_floor() {
 module mega_ext_case(mode="lower_half") {
     mega_case_tran=[
         -mega_case_dimensions.x/2,
-        -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness),
+        -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness) - 20,
         (sin(mega_rot) * mega_case_dimensions.y + 0.75 * min_thickness) - mega_case_dimensions.z,
     ];
 
@@ -159,25 +158,20 @@ module mega_ext_case(mode="lower_half") {
                 ];
                 translate(frame_tran) MegaWithLCDFrame();
             }
-        } else if (mode=="lower_pad") {
+        } else if (mode=="pad") {
             rotate(case_rot) translate(case_position_tran) {
-                cube([
-                    mega_case_dimensions.x,
-                    mega_case_dimensions.y,
-                    de_minimus,
-                ], center=false);
-            }
-        } else if (mode=="int_pad") {
-            rotate(case_rot) translate([
-                0,
-                mega_case_dimensions.y - de_minimus,
-                0
-            ]) {
-                cube([
-                    mega_case_dimensions.x,
-                    de_minimus,
-                    mega_case_dimensions.z
-                ], center=false);
+                mating_x = 60;
+                translate([
+                    mega_case_dimensions.x - mating_x,
+                    0,
+                    0
+                ]) {
+                    cube([
+                        mating_x,
+                        mega_case_dimensions.y,
+                        mega_case_dimensions.z
+                    ], center=false);
+                }
             }
         } else if (mode =="internal_area") {
             rotate(case_rot) translate(case_position_tran) {
@@ -194,7 +188,7 @@ module mega_ext_case(mode="lower_half") {
         }
     }
 }
-mega_ext_case();
+
 
 transition_floor_dim=[
     121.5,
@@ -220,8 +214,6 @@ transition_wedge_tran=[
     transition_wedge_dim.z / 2 - 3
 ];
 
-translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
-
 int_transition_dim=[
     119.6,
     2,
@@ -242,27 +234,45 @@ module ext_tran_shield() {
 }
 
 module ext_tran_pad() {
+    resize_x=40;
     translate([
-        ext_transition_tran.x,
+        ext_transition_tran.x + resize_x,
         ext_transition_tran.y - ext_transition_dim.y / 2 + de_minimus / 2,
         ext_transition_tran.z
     ]) cube([
-        ext_transition_dim.x,
+        resize_x,
         de_minimus,
         ext_transition_dim.z,
     ], center=true);
 }
 
-ext_tran_shield();
 
 difference() {
-    hull() {
-        ext_tran_pad();
-        mega_ext_case("lower_half");
-        // mega_ext_case("int_pad");
+    // shield, external interface, bridge and case
+    union() {
+        mega_ext_case();
+        translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
+        ext_tran_shield();
+        difference() {
+            hull() {
+                ext_tran_pad();
+                mega_ext_case("pad");
+            }
+            mega_ext_case("internal_area");
+        }
     }
-    mega_ext_case("internal_area");
+    // internal tunnel
+    translate([
+        35,
+        10,
+        38
+    ]) rotate([
+        80,
+        0,
+        0
+    ]) cylinder_outer(90, 11);
 }
+
 
 case_front_holes_t_y=2+16;
 case_holes_dx=80;
