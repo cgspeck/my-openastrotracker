@@ -1,3 +1,4 @@
+use <MCAD/boxes.scad>
 use <board-holder.scad>
 
 fn=72*3;
@@ -138,20 +139,26 @@ module mega_ext_case(mode="lower_half") {
         0,
         0
     ];
+    corner_rad=3;
     translate(mega_case_tran) {
         if (mode=="lower_half") {
             rotate(case_rot) translate(case_position_tran) {
                 difference() {
-                    cube(mega_case_dimensions, center=false);
                     translate([
-                        min_thickness,
-                        min_thickness,
-                        min_thickness
-                    ]) cube([
+                        mega_case_dimensions.x / 2,
+                        mega_case_dimensions.y / 2,
+                        mega_case_dimensions.z / 2
+                    ]) roundedBox(mega_case_dimensions, corner_rad, true);
+                    internal_dim = [
                         mega_case_dimensions.x - 2*min_thickness,
                         mega_case_dimensions.y - 2*min_thickness,
                         mega_case_dimensions.z - min_thickness,
-                    ], center=false);
+                    ];
+                    translate([
+                        internal_dim.x / 2 + min_thickness,
+                        internal_dim.y / 2 + min_thickness,
+                        internal_dim.z / 2 + min_thickness
+                    ]) roundedBox(internal_dim, corner_rad, true);
                 }
                 frame_tran = [
                     mega_board_dimensions.x / 2,
@@ -165,12 +172,12 @@ module mega_ext_case(mode="lower_half") {
                 mating_x = 60;
                 translate([
                     mega_case_dimensions.x - mating_x,
-                    0,
+                    corner_rad,
                     0
                 ]) {
                     cube([
                         mating_x,
-                        mega_case_dimensions.y,
+                        mega_case_dimensions.y - corner_rad,
                         mega_case_dimensions.z
                     ], center=false);
                 }
