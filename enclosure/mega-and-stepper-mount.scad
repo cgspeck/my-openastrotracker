@@ -143,8 +143,22 @@ module MegaWithLCDFrame(cutouts=false) {
 
         if (cutouts) {
             translate([0, 0, frame_total_height]) {
+                // screen
                 linear_extrude(mega_and_screen_height) polygon(points=screen_pts);
+                // brightness pot
                 translate(pot_pt) cylinder_outer(mega_and_screen_height, 1.5);
+                // usb port
+                translate([
+                    -20,
+                    29-2.5,
+                    0
+                ]) cube([30,15,10]);
+                // reset switch
+                translate([
+                    26,
+                    0,
+                    3
+                ]) rotate([90,0,0]) cylinder_outer(20, 5/2);
             }
         }
     }
@@ -249,6 +263,7 @@ module mega_ext_case(mode="lower_half") {
                         -10,
                         push_fit_tab_z_tran
                     ]) cube([10, 30 + 2*clearance_loose, push_fit_tab_z_dim], center=false);
+                    translate(frame_tran) MegaWithLCDFrame("cutouts");
                 }
                 translate(frame_tran) MegaWithLCDFrame();
             }
@@ -609,7 +624,6 @@ difference() {
     rhs_case_holes(true);
 }
 
-
 !union() {
     rotate([
         -mega_case_rot.x,
@@ -620,4 +634,4 @@ difference() {
     mega_ext_case("lid");
 }
 
-// mega_ext_case("lid");
+
