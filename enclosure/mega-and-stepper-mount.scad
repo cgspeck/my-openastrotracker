@@ -78,8 +78,8 @@ module LCDButtonCutouts(mode="cutouts", z=5) {
 
 
     translate([
-        -17,
-        0,
+        -17 - 2.6,
+        -3.5 - 1,
         0
     ]) {
         for (i=pts) {
@@ -119,13 +119,13 @@ module MegaWithLCDFrame(cutouts=false) {
     frame_total_height=frame_height+pillar_height;
 
     screen_pts = [
-        [-8, 2.5+5.1+10],
-        [14+1.3+50.8+24.1 - 1.5, 2.5+5.1+10],
-        [14+1.3+50.8+24.1 - 1.5, 2.5+5.1+10 + 26],
-        [-8,  2.5+5.1+10 + 26],
+        [-5, 18],
+        [64, 18],
+        [64, 34],
+        [-5,  34],
     ];
 
-    pot_pt = [-8, 53.3+1, 0];
+    pot_pt = [-5, 52, 0];
     translate([
         -mega_board_dimensions.x/2,
         -mega_board_dimensions.y/2,
@@ -150,15 +150,15 @@ module MegaWithLCDFrame(cutouts=false) {
                 // usb port
                 translate([
                     -20,
-                    29-2.5,
+                    29-2.5+7.5,
                     0
                 ]) cube([30,15,10]);
                 // reset switch
                 translate([
-                    26,
+                    26+0.5,
                     0,
-                    3
-                ]) rotate([90,0,0]) cylinder_outer(20, 5/2);
+                    3+2.5
+                ]) rotate([90,0,0]) cylinder_outer(20, 6.5/2);
             }
         }
     }
