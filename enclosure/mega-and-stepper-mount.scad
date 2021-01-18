@@ -78,8 +78,8 @@ module LCDButtonCutouts(mode="cutouts", z=5) {
 
 
     translate([
-        -17 - 2.6,
-        -3.5 - 1,
+        -17 - 2.6 - 1,
+        -3.5 - 1 - 2.6,
         0
     ]) {
         for (i=pts) {
@@ -125,7 +125,7 @@ module MegaWithLCDFrame(cutouts=false) {
         [-5,  34],
     ];
 
-    pot_pt = [-5, 52, 0];
+    pot_pt = [-6, 49, 0];
     translate([
         -mega_board_dimensions.x/2,
         -mega_board_dimensions.y/2,
@@ -624,7 +624,7 @@ difference() {
     rhs_case_holes(true);
 }
 
-!union() {
+union() {
     rotate([
         -mega_case_rot.x,
         mega_case_rot.y,
