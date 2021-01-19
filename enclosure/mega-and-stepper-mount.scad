@@ -157,11 +157,13 @@ module MegaWithLCDFrame(cutouts=false) {
                     0
                 ]) cube([30,15,10]);
                 // reset switch
+                /*
                 translate([
                     26+0.5,
                     0,
                     3+2.5
                 ]) rotate([90,0,0]) cylinder_outer(20, 6.5/2);
+                */
             }
         }
     }
@@ -298,10 +300,10 @@ module mega_ext_case(mode="lower_half") {
                 42,-20
             ];
             button_through_z=20;
-            button_guide_z=5;
+            button_guide_z=4.8;
             difference() {
                 union() {
-                    lid_thickness=min_thickness;
+                    lid_thickness=2.3;
                     // union() {
                         roundedBox([
                             mega_case_dimensions.x,
@@ -358,7 +360,7 @@ module mega_ext_case(mode="lower_half") {
                     translate([
                         button_tran_xy.x,
                         button_tran_xy.y,
-                        -min_thickness / 2 + min_thickness - de_minimus
+                        lid_thickness / 2 - de_minimus
                     ]) LCDButtonCutouts("guides", z=button_guide_z);
                 }
             // the mega screen and brightness adjuster
