@@ -43,8 +43,11 @@ min_thickness=2.4;
 mega_case_dimensions=[
     mega_board_dimensions.x + 24 + 2 * min_thickness,
     mega_board_dimensions.y + 20 + min_thickness,
-    mega_and_screen_height + pillar_height + 2 * min_thickness
+    mega_and_screen_height + pillar_height + 1 * min_thickness
 ];
+
+echo("mega_case_dimensions", mega_case_dimensions.z);
+echo(mega_case_dimensions.z - pillar_height - min_thickness * 2);
 
 mega_case_rot=[
     mega_rot,
@@ -193,7 +196,6 @@ module push_fit_tab() {
         [-1.5, push_fit_tab_height-3.5],
         [0, push_fit_tab_height-3.5],
     ];
-    echo(xy_pts);
 
     translate([
         0,
@@ -232,7 +234,6 @@ module mega_ext_case(mode="lower_half") {
                         mega_case_dimensions.y / 2,
                         mega_case_dimensions.z / 2
                     ]) roundedBox(mega_case_dimensions, corner_rad, true);
-                    echo("mega_case_dimensions", mega_case_dimensions);
                     internal_dim = [
                         mega_case_dimensions.x - 2*min_thickness,
                         mega_case_dimensions.y - 2*min_thickness,
@@ -443,8 +444,6 @@ module 40mm_fan_cutout(length=10) {
                 -length / 2,
                 0
             ]) for (i=[0:segments-1]) {
-                echo(str("i =", i));
-                echo(str("rot_fact * i =", rot_fact * i));
                 rotate([
                     0,
                     rot_fact * i,
@@ -624,7 +623,7 @@ difference() {
     rhs_case_holes(true);
 }
 
-union() {
+!union() {
     rotate([
         -mega_case_rot.x,
         mega_case_rot.y,
