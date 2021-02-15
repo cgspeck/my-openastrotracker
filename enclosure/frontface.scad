@@ -15,8 +15,4 @@ module Plate() {
     translate([0,0, plate_dim_inner.z - plate_dim_outer.z]) cube(plate_dim_inner, center=true);
 }
 
-module LCDShield(punchouts=false) {
-    // standoffs for the screen
-    lc
-}
 Plate();

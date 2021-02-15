@@ -79,7 +79,6 @@ module LCDButtonCutouts(mode="cutouts", z=5) {
     hole_dia=5.2;
     guide_dia=hole_dia + 2.4;
 
-
     translate([
         -17 - 2.6 - 1,
         -3.5 - 1 - 2.6,
@@ -91,7 +90,7 @@ module LCDButtonCutouts(mode="cutouts", z=5) {
                     i.x,
                     i.y,
                     0
-                ]) cylinder_outer(z, hole_dia/2);
+                ]) cylinder_outer(z, (hole_dia/2 + 0.10));
             }
             if (mode=="guides") {
                 translate([
