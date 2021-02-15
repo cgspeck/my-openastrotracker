@@ -186,7 +186,7 @@ module mega_lower_floor() {
 }
 
 push_fit_tab_width=2;
-push_fit_tab_height=10;
+push_fit_tab_height=7;
 
 module push_fit_tab() {
     z = 10;
@@ -246,14 +246,7 @@ module mega_ext_case(mode="lower_half") {
                         internal_dim.z / 2 + min_thickness
                     ]) roundedBox(internal_dim, corner_rad, true);
                     //
-                    /*
-                    push-fit tab holes
-                    z = 10;
-                    push_fit_tab_width=2;
-                    push_fit_tab_height=10;
-                    3.5
-                    */
-                    push_fit_tab_z_tran=mega_case_dimensions.z - 10 + clearance_loose;
+                    push_fit_tab_z_tran=mega_case_dimensions.z - push_fit_tab_height + clearance_loose;
                     push_fit_tab_z_dim=3.5 + clearance_loose;
                     translate([
                         -30,
