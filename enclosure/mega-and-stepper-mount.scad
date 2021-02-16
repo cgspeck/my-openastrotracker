@@ -43,7 +43,7 @@ min_thickness=2.4;
 mega_case_dimensions=[
     mega_board_dimensions.x + 24 + 2 * min_thickness,
     mega_board_dimensions.y + 20 + min_thickness,
-    mega_and_screen_height + pillar_height + 1 * min_thickness
+    mega_and_screen_height + pillar_height + 1 * min_thickness + 1.5
 ];
 
 echo("mega_case_dimensions", mega_case_dimensions.z);
@@ -186,7 +186,7 @@ module mega_lower_floor() {
 }
 
 push_fit_tab_width=2;
-push_fit_tab_height=7;
+push_fit_tab_height=7 + 1.5;
 
 module push_fit_tab() {
     z = 10;
@@ -617,7 +617,7 @@ difference() {
     rhs_case_holes(true);
 }
 
-union() {
+!union() {
     rotate([
         -mega_case_rot.x,
         mega_case_rot.y,
@@ -628,4 +628,4 @@ union() {
 }
 
 
-!mega_ext_case("lid");
+// !mega_ext_case("lid");
