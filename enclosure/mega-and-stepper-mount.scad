@@ -289,7 +289,7 @@ module mega_ext_case(mode="lower_half") {
             }
         } else if (mode=="lid") {
             button_tran_xy = [
-                42-0.75,-20+1.5
+                42+0.5,-20+1.5
             ];
             button_through_z=20;
             button_guide_z=4.8;
