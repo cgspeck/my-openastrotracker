@@ -90,7 +90,7 @@ module LCDButtonCutouts(mode="cutouts", z=5) {
                     i.x,
                     i.y,
                     0
-                ]) cylinder_outer(z, (hole_dia/2 + 0.10));
+                ]) cylinder_outer(z, (hole_dia/2 + 0.20));
             }
             if (mode=="guides") {
                 translate([
