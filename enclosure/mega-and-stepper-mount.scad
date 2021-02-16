@@ -127,7 +127,7 @@ module MegaWithLCDFrame(cutouts=false) {
         [-5,  34],
     ];
 
-    pot_pt = [-6, 49, 0];
+    pot_pt = [-6, 49+1.2, 0];
     translate([
         -mega_board_dimensions.x/2,
         -mega_board_dimensions.y/2,
@@ -289,7 +289,7 @@ module mega_ext_case(mode="lower_half") {
             }
         } else if (mode=="lid") {
             button_tran_xy = [
-                42,-20
+                42-0.75,-20+1.5
             ];
             button_through_z=20;
             button_guide_z=4.8;
@@ -617,7 +617,7 @@ difference() {
     rhs_case_holes(true);
 }
 
-!union() {
+union() {
     rotate([
         -mega_case_rot.x,
         mega_case_rot.y,
@@ -628,3 +628,4 @@ difference() {
 }
 
 
+!mega_ext_case("lid");
