@@ -209,7 +209,7 @@ module mega_ext_case(mode="lower_half") {
     mega_case_tran=[
         -mega_case_dimensions.x/2,
         -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness) - 20,
-        (sin(mega_rot) * mega_case_dimensions.y + 0.75 * min_thickness) - mega_case_dimensions.z,
+        (sin(mega_rot) * mega_case_dimensions.y + 0.75 * min_thickness) - mega_case_dimensions.z - 6,
     ];
 
     case_position_tran=[
@@ -528,12 +528,12 @@ difference() {
     translate([
         35,
         10,
-        38
+        39
     ]) rotate([
-        80,
+        77,
         0,
         0
-    ]) cylinder_outer(90, 11);
+    ]) cylinder_outer(90, 13);
     // fan mount
 
     translate([
@@ -617,15 +617,15 @@ difference() {
     rhs_case_holes(true);
 }
 
-!union() {
-    rotate([
-        -mega_case_rot.x,
-        mega_case_rot.y,
-        mega_case_rot.z
-    ]) mega_ext_case();
+// !union() {
+//     rotate([
+//         -mega_case_rot.x,
+//         mega_case_rot.y,
+//         mega_case_rot.z
+//     ]) mega_ext_case();
 
-    mega_ext_case("lid");
-}
+//     mega_ext_case("lid");
+// }
 
 
-// !mega_ext_case("lid");
+// // !mega_ext_case("lid");
