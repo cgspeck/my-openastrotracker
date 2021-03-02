@@ -67,7 +67,7 @@ ext_transition_tran=[
 ];
 
 module ULN2003Board() {
-    pillar_height=4;
+    pillar_height=6;
     hole_pts=[
         [2, 2],
         [31.5, 2],
@@ -102,8 +102,6 @@ module ULN2003Board() {
     );
 }
 
-translate([15,7,0]) ULN2003Board();
-translate([15,45,0]) ULN2003Board();
 
 module MotorControlBoard() {
     pillar_height=4;
@@ -136,8 +134,6 @@ module MotorControlBoard() {
         fixing_height=fixing_height
     );
 }
-
-translate([-43.5,35.5,0]) MotorControlBoard();
 
 module LCDButtonCutouts(mode="cutouts", z=5) {
     pts = [
@@ -687,6 +683,9 @@ difference() {
             rhs_case_holes(rear=false);
             lhs_case_holes(rear=false);
         }
+        translate([15,7,0]) ULN2003Board();
+        translate([15,45,0]) ULN2003Board();
+        translate([-43.5,35.5,0]) MotorControlBoard();
     }
     lhs_case_holes(true);
     rhs_case_holes(true);
