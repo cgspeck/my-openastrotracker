@@ -57,7 +57,7 @@ mega_case_rot=[
 
 ext_transition_dim=[
     114,
-    1.5,
+    3,
     57
 ];
 ext_transition_tran=[
@@ -528,9 +528,9 @@ difference() {
     translate([
         35,
         10,
-        39
+        38
     ]) rotate([
-        77,
+        78,
         0,
         0
     ]) cylinder_outer(90, 13);
