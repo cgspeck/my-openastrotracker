@@ -464,7 +464,7 @@ transition_floor_tran=[
     0
 ];
 
-translate(transition_floor_tran) cube(transition_floor_dim, center=true);
+//translate(transition_floor_tran) cube(transition_floor_dim, center=true);
 
 transition_wedge_dim=[
     121.5,
@@ -541,6 +541,8 @@ difference() {
         0,
         35
     ]) 40mm_fan_cutout();
+    cube_mask_dim=[200, 200, 10];
+    translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
 }
 
 
