@@ -99,12 +99,14 @@ module BoardHolder2Pt(
             }
 
             multiHull() {
-                translate(fixing_pts[0]) cylinder_outer(fixing_height, fixing_hole_diameter);
+                if (fixing_holes > 0) {
+                    translate(fixing_pts[0]) cylinder_outer(fixing_height, fixing_hole_diameter);
+                }
                 hole_0();
                 hole_1();
             }
 
-            if (defined(fixing_pts[1])) {
+            if (fixing_holes > 0) {
                 multiHull() {
                     translate(fixing_pts[1]) cylinder_outer(fixing_height, fixing_hole_diameter);
                     hole_0();

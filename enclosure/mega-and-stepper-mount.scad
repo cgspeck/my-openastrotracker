@@ -66,6 +66,79 @@ ext_transition_tran=[
     57 / 2
 ];
 
+module ULN2003Board() {
+    pillar_height=4;
+    hole_pts=[
+        [2, 2],
+        [31.5, 2],
+        [2, 28.5],
+        [31.5, 28.5]
+    ];
+    fixing_holes=1;
+    fixing_hole_distance=[10,10];
+    frame_height=2.4;
+    fixing_height=frame_height;
+
+    frame_total_height=frame_height+pillar_height;
+
+    BoardHolder4Pt(
+        [35, 32],
+        hole_pts,
+        fixing_holes,
+        fixing_hole_distance,
+        frame_width=2,
+        frame_height=frame_height,
+        mount_hole_diameter=2.5, // Defaults are based on a #4 screw
+        mount_post_diameter=2.8,
+        mount_post_height=2.2,
+        mount_1_type="hole", // [hole, post]
+        mount_2_type="post",
+        mount_3_type="hole",
+        mount_4_type="hole",
+        pillar_height=pillar_height,
+        fixing_hole_diameter=3, // Defaults are based on a #4 screw
+        fixing_hole_head_diameter=6,
+        fixing_height=fixing_height
+    );
+}
+
+translate([15,7,0]) ULN2003Board();
+translate([15,45,0]) ULN2003Board();
+
+module MotorControlBoard() {
+    pillar_height=4;
+    hole_pts=[
+        [3.4, 5],
+        [3.4, 37],
+    ];
+    fixing_holes=0;
+    fixing_hole_distance=[10,10];
+    frame_height=2.4;
+    fixing_height=frame_height;
+
+    frame_total_height=frame_height+pillar_height;
+
+    BoardHolder2Pt(
+        [35, 45.5],
+        hole_pts,
+        fixing_holes,
+        fixing_hole_distance,
+        frame_width=2,
+        frame_height=frame_height,
+        mount_hole_diameter=2.5, // Defaults are based on a #4 screw
+        mount_post_diameter=2.8,
+        mount_post_height=2.2,
+        mount_1_type="hole", // [hole, post]
+        mount_2_type="hole",
+        pillar_height=pillar_height,
+        fixing_hole_diameter=3, // Defaults are based on a #4 screw
+        fixing_hole_head_diameter=6,
+        fixing_height=fixing_height
+    );
+}
+
+translate([-43.5,35.5,0]) MotorControlBoard();
+
 module LCDButtonCutouts(mode="cutouts", z=5) {
     pts = [
         [0, 0],
