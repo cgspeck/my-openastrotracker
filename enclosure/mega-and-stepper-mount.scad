@@ -7,6 +7,7 @@ $fn=fn;
 de_minimus=0.01;
 clearance_loose=0.4;
 clearance_tight=0.2;
+corner_rad=3;
 
 module cylinder_outer(height,radius,center=false, fn=fn){
     fudge = 1/cos(180/fn);
@@ -287,8 +288,6 @@ module mega_ext_case(mode="lower_half") {
         0
     ];
 
-    corner_rad=3;
-
     frame_tran = [
         mega_board_dimensions.x / 2 + 15,
         mega_board_dimensions.y / 2 + 2.4 + 5,
@@ -342,6 +341,19 @@ module mega_ext_case(mode="lower_half") {
                     mating_x,
                     mega_case_dimensions.y,
                     mega_case_dimensions.z
+                ], corner_rad, true);
+            }
+        } else if (mode=="pad2") {
+            rotate(mega_case_rot) translate(case_position_tran) {
+                mating_x = 60;
+                translate([
+                    mega_case_dimensions.x / 2 - mating_x / 2 - min_thickness * 2,
+                    mega_case_dimensions.y / 2,
+                    0
+                ]) roundedBox([
+                    mating_x,
+                    mega_case_dimensions.y,
+                    de_minimus
                 ], corner_rad, true);
             }
         } else if (mode =="internal_area") {
@@ -589,9 +601,22 @@ module FrontPart() {
             // ext_tran_shield();
             BlankFacePlate();
             difference() {
-                hull() {
-                    #ext_tran_pad();
-                    mega_ext_case("pad");
+                union() {
+                    hull() {
+                        ext_tran_pad();
+                        mega_ext_case("pad");
+                    }
+                    hull() {
+                        translate([
+                            0,
+                            -83.5,
+                        0]) roundedBox([
+                            mega_case_dimensions.x,
+                            15,
+                            de_minimus
+                        ], corner_rad, true);
+                        mega_ext_case("pad2");
+                    }
                 }
                 mega_ext_case("internal_area");
             }
@@ -718,10 +743,6 @@ module InternalTopPart() {
     }
 }
 
-!InternalTopPart();
-
-
-
 case_front_holes_t_y=2+16;
 case_holes_dx=80;
 case_rear_holes_t_y=2+16+60;
@@ -790,3 +811,7 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
 // // !mega_ext_case("lid");
 
 // !BlankFacePlate();
+
+FrontPart();
+
+translate([0, 80, 0]) InternalTopPart();
