@@ -104,7 +104,7 @@ module ULN2003Board() {
 }
 
 
-module MotorControlBoard() {
+module MotorControlBoard(add_height) {
     pillar_height=4;
     hole_pts=[
         [3.4, 5],
@@ -112,7 +112,7 @@ module MotorControlBoard() {
     ];
     fixing_holes=0;
     fixing_hole_distance=[10,10];
-    frame_height=2.4;
+    frame_height=2.4 + add_height;
     fixing_height=frame_height;
 
     frame_total_height=frame_height+pillar_height;
@@ -701,6 +701,7 @@ module InternalTopPart() {
             //brackets to hold the GPS antenna
             gps_bracket_dx=case_holes_dx-3;
             gps_bracket_y=5;
+            gps_bracket_z=5;
             gps_bracket_ty=case_rear_holes_t_y-8;
 
             translate([
@@ -712,7 +713,7 @@ module InternalTopPart() {
                 translate([0, 0, 0]) cube([
                     gps_bracket_dx,
                     gps_bracket_y,
-                    min_thickness
+                    gps_bracket_z
                 ]);
             }
 
@@ -725,25 +726,24 @@ module InternalTopPart() {
                 translate([0, 0, 0]) cube([
                     gps_bracket_dx,
                     gps_bracket_y,
-                    min_thickness
+                    gps_bracket_z
                 ]);
             }
             //screw holes for GPS module
             gps_screw_hole_dist=20.6;
             // doughnut(height,outer_radius,inner_radius,center=true, fn=fn){
             hole_dia=2.5;
-            gps_post_z=4;
+            gps_post_z=gps_bracket_z + 4;
             translate([
                 case_holes_dx/2,
                 50,
             gps_post_z/2+min_thickness-de_minimus
             ]) {
-                doughnut(4,hole_dia*1.5,hole_dia/2,center=true);
-                translate([0,gps_screw_hole_dist,0]) doughnut(4,hole_dia*1.5,hole_dia/2,center=true);
+                doughnut(gps_post_z,hole_dia*1.5,hole_dia/2,center=true);
+                translate([0,gps_screw_hole_dist,0]) doughnut(gps_post_z,hole_dia*1.5,hole_dia/2,center=true);
             }
-
             //second, upper TMC22xx driver board
-            translate([-43.5,35.5,0]) MotorControlBoard();
+            translate([-43.5,35.5,0]) MotorControlBoard(gps_bracket_z);
 
         }
         lhs_case_holes(true);
