@@ -345,9 +345,9 @@ module mega_ext_case(mode="lower_half") {
             }
         } else if (mode=="pad2") {
             rotate(mega_case_rot) translate(case_position_tran) {
-                mating_x = 60;
+                mating_x = mega_case_dimensions.x;
                 translate([
-                    mega_case_dimensions.x / 2 - mating_x / 2 - min_thickness * 2,
+                    mega_case_dimensions.x / 2,
                     mega_case_dimensions.y / 2,
                     0
                 ]) roundedBox([
