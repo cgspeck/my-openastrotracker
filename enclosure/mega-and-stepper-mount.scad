@@ -535,16 +535,7 @@ transition_floor_tran=[
 
 //translate(transition_floor_tran) cube(transition_floor_dim, center=true);
 
-transition_wedge_dim=[
-    121.5,
-    2,
-    64
-];
-transition_wedge_tran=[
-    0,
-    transition_wedge_dim.y / 2,
-    transition_wedge_dim.z / 2 - 3
-];
+
 
 int_transition_dim=[
     119.6,
@@ -561,7 +552,18 @@ module int_tran_floor() {
     translate(int_transition_tran) cube(int_transition_dim, center=true);
 }
 
-module ext_tran_shield() {
+module BlankFacePlate() {
+    transition_wedge_dim=[
+        121.5,
+        2,
+        64
+    ];
+    transition_wedge_tran=[
+        0,
+        transition_wedge_dim.y / 2,
+        transition_wedge_dim.z / 2 - 3
+    ];
+    translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
     translate(ext_transition_tran) cube(ext_transition_dim, center=true);
 }
 
@@ -578,41 +580,146 @@ module ext_tran_pad() {
     ], center=true);
 }
 
-
-difference() {
-    // shield, external interface, bridge and case
-    union() {
-        mega_ext_case();
-        translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
-        ext_tran_shield();
-        difference() {
-            hull() {
-                ext_tran_pad();
-                mega_ext_case("pad");
+module FrontPart() {
+    difference() {
+        // shield, external interface, bridge and case
+        union() {
+            mega_ext_case();
+            // #translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
+            // ext_tran_shield();
+            BlankFacePlate();
+            difference() {
+                hull() {
+                    #ext_tran_pad();
+                    mega_ext_case("pad");
+                }
+                mega_ext_case("internal_area");
             }
-            mega_ext_case("internal_area");
         }
-    }
-    // internal tunnel
-    translate([
-        35,
-        10,
-        38
-    ]) rotate([
-        78,
-        0,
-        0
-    ]) cylinder_outer(90, 13);
-    // fan mount
+        // internal tunnel
+        translate([
+            35,
+            10,
+            38
+        ]) rotate([
+            78,
+            0,
+            0
+        ]) cylinder_outer(90, 13);
+        // fan mount
 
-    translate([
-        -25,
-        0,
-        35
-    ]) 40mm_fan_cutout();
-    cube_mask_dim=[200, 200, 10];
-    translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
+        translate([
+            -25,
+            0,
+            35
+        ]) 40mm_fan_cutout();
+        cube_mask_dim=[200, 200, 10];
+        translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
+    }
+
+    // bottom part which holds various PCBs
+    difference() {
+        union() {
+            multiHull() {
+                rhs_case_holes();
+            }
+
+            multiHull() {
+                lhs_case_holes();
+            }
+
+            multiHull() {
+                int_tran_floor();
+                rhs_case_holes(rear=false);
+                lhs_case_holes(rear=false);
+            }
+            translate([15,7,0]) ULN2003Board();
+            translate([15,45,0]) ULN2003Board();
+            translate([-43.5,35.5,0]) MotorControlBoard();
+        }
+        lhs_case_holes(true);
+        rhs_case_holes(true);
+    }
 }
+
+
+module InternalTopPart() {
+    gps_ant_width=25.60;
+    difference() {
+        union() {
+            multiHull() {
+                rhs_case_holes();
+            }
+
+            multiHull() {
+                lhs_case_holes();
+            }
+
+            multiHull() {
+                rhs_case_holes(rear=false);
+                lhs_case_holes(rear=false);
+            }
+
+            multiHull() {
+                rhs_case_holes(front=false);
+                lhs_case_holes(front=false);
+            }
+
+            //brackets to hold the GPS antenna
+            gps_bracket_dx=case_holes_dx-3;
+            gps_bracket_y=5;
+            gps_bracket_ty=case_rear_holes_t_y-8;
+
+            translate([
+                -gps_bracket_dx/2,
+                gps_bracket_ty,
+                min_thickness
+            ]) hull() {
+                cube();
+                translate([0, 0, 0]) cube([
+                    gps_bracket_dx,
+                    gps_bracket_y,
+                    min_thickness
+                ]);
+            }
+
+            translate([
+                -gps_bracket_dx/2,
+                gps_bracket_ty-gps_ant_width-gps_bracket_y,
+                min_thickness
+            ]) hull() {
+                cube();
+                translate([0, 0, 0]) cube([
+                    gps_bracket_dx,
+                    gps_bracket_y,
+                    min_thickness
+                ]);
+            }
+            //screw holes for GPS module
+            gps_screw_hole_dist=20.6;
+            // doughnut(height,outer_radius,inner_radius,center=true, fn=fn){
+            hole_dia=2.5;
+            gps_post_z=4;
+            translate([
+                case_holes_dx/2,
+                50,
+            gps_post_z/2+min_thickness-de_minimus
+            ]) {
+                doughnut(4,hole_dia*1.5,hole_dia/2,center=true);
+                translate([0,gps_screw_hole_dist,0]) doughnut(4,hole_dia*1.5,hole_dia/2,center=true);
+            }
+
+            //second, upper TMC22xx driver board
+            translate([-43.5,35.5,0]) MotorControlBoard();
+
+        }
+        lhs_case_holes(true);
+        rhs_case_holes(true);
+    }
+}
+
+!InternalTopPart();
+
 
 
 case_front_holes_t_y=2+16;
@@ -668,28 +775,6 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
     }
 }
 
-difference() {
-    union() {
-        multiHull() {
-            rhs_case_holes();
-        }
-
-        multiHull() {
-            lhs_case_holes();
-        }
-
-        multiHull() {
-            int_tran_floor();
-            rhs_case_holes(rear=false);
-            lhs_case_holes(rear=false);
-        }
-        translate([15,7,0]) ULN2003Board();
-        translate([15,45,0]) ULN2003Board();
-        translate([-43.5,35.5,0]) MotorControlBoard();
-    }
-    lhs_case_holes(true);
-    rhs_case_holes(true);
-}
 
 // !union() {
 //     rotate([
@@ -703,3 +788,5 @@ difference() {
 
 
 // // !mega_ext_case("lid");
+
+// !BlankFacePlate();
