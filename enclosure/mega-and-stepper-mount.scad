@@ -632,7 +632,6 @@ module FrontPart() {
             0
         ]) cylinder_outer(90, 13);
         // fan mount
-
         translate([
             -25,
             0,
@@ -640,6 +639,15 @@ module FrontPart() {
         ]) 40mm_fan_cutout();
         cube_mask_dim=[200, 200, 10];
         translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
+        // holes underneath for feet
+        translate([
+            0,
+            -83.5,
+            0
+        ]) {
+            translate([-57,0,0]) cylinder_outer(4, 2.5/2);
+            translate([57,0,0]) cylinder_outer(4, 2.5/2);
+        }
     }
 
     // bottom part which holds various PCBs
