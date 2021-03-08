@@ -294,6 +294,9 @@ module mega_ext_case(mode="lower_half") {
         2.3
     ];
 
+    push_fit_tab_z_tran=mega_case_dimensions.z - push_fit_tab_height + clearance_loose;
+    push_fit_tab_z_dim=3.5 + clearance_loose;
+
     translate(mega_case_tran) {
         if (mode=="lower_half") {
             rotate(mega_case_rot) translate(case_position_tran) {
@@ -314,8 +317,6 @@ module mega_ext_case(mode="lower_half") {
                         internal_dim.z / 2 + min_thickness
                     ]) roundedBox(internal_dim, corner_rad, true);
                     //
-                    push_fit_tab_z_tran=mega_case_dimensions.z - push_fit_tab_height + clearance_loose;
-                    push_fit_tab_z_dim=3.5 + clearance_loose;
                     translate([
                         -30,
                         mega_case_dimensions.y /2 - 5 - clearance_loose,
@@ -358,15 +359,25 @@ module mega_ext_case(mode="lower_half") {
             }
         } else if (mode =="internal_area") {
             rotate(mega_case_rot) translate(case_position_tran) {
-                    translate([
-                        min_thickness,
-                        min_thickness,
-                        min_thickness
-                    ]) cube([
-                        mega_case_dimensions.x - 2*min_thickness,
-                        mega_case_dimensions.y - 2*min_thickness,
-                        mega_case_dimensions.z - min_thickness,
-                    ], center=false);
+                translate([
+                    min_thickness,
+                    min_thickness,
+                    min_thickness
+                ]) cube([
+                    mega_case_dimensions.x - 2*min_thickness,
+                    mega_case_dimensions.y - 2*min_thickness,
+                    mega_case_dimensions.z - min_thickness,
+                ], center=false);
+                translate([
+                    -30,
+                    mega_case_dimensions.y /2 - 5 - clearance_loose,
+                    push_fit_tab_z_tran
+                ]) cube([200, 10 + 2*clearance_loose, push_fit_tab_z_dim], center=false);
+                translate([
+                    mega_case_dimensions.x / 2 - 5 - clearance_loose,
+                    -10,
+                    push_fit_tab_z_tran
+                ]) cube([10, 30 + 2*clearance_loose, push_fit_tab_z_dim], center=false);
             }
         } else if (mode=="lid") {
             button_tran_xy = [
