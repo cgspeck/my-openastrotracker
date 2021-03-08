@@ -68,7 +68,7 @@ ext_transition_tran=[
 ];
 
 module ULN2003Board() {
-    pillar_height=6;
+    pillar_height=7.5;
     hole_pts=[
         [2, 2],
         [31.5, 2],
@@ -667,7 +667,6 @@ module FrontPart() {
                 lhs_case_holes(rear=false);
             }
             translate([15,7,0]) ULN2003Board();
-            translate([15,45,0]) ULN2003Board();
             translate([-43.5,35.5,0]) MotorControlBoard();
         }
         lhs_case_holes(true);
@@ -678,6 +677,9 @@ module FrontPart() {
 
 module InternalTopPart() {
     gps_ant_width=25.60;
+    // upper ULN2003Board
+    uln2003_tran=[42,41.5,0];
+    uln2003_rot=[0,0,180];
     difference() {
         union() {
             multiHull() {
@@ -744,7 +746,7 @@ module InternalTopPart() {
             }
             //second, upper TMC22xx driver board
             translate([-43.5,35.5,0]) MotorControlBoard(gps_bracket_z);
-
+            translate(uln2003_tran) rotate(uln2003_rot) ULN2003Board();
         }
         lhs_case_holes(true);
         rhs_case_holes(true);
