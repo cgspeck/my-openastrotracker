@@ -104,7 +104,7 @@ module ULN2003Board() {
 }
 
 
-module MotorControlBoard(add_height) {
+module MotorControlBoard(add_height=0) {
     pillar_height=4;
     hole_pts=[
         [3.4, 5],
