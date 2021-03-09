@@ -1,5 +1,6 @@
 use <MCAD/boxes.scad>
 use <board-holder.scad>
+use <terminal-block.scad>
 
 fn=72*3;
 $fn=fn;
@@ -662,6 +663,7 @@ module FrontPart() {
     }
 
     // bottom part which holds various PCBs
+    term_block_tran = [5,45,0];
     difference() {
         union() {
             multiHull() {
@@ -679,9 +681,17 @@ module FrontPart() {
             }
             translate([15,7,0]) ULN2003Board();
             translate([-43.5,35.5,0]) MotorControlBoard();
+            translate(term_block_tran) TerminalBlock(4);
+            foo=80;
+            translate([
+                term_block_tran.x - foo / 2 - 2.5,
+                term_block_tran.y,
+                term_block_tran.z
+            ]) cube([foo, 10, 2.4]);
         }
         lhs_case_holes(true);
         rhs_case_holes(true);
+        translate(term_block_tran) TerminalBlock(4, cutout_only=true);
     }
 }
 
