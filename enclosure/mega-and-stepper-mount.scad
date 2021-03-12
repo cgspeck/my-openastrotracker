@@ -139,7 +139,7 @@ module LCDButtonCutouts(mode="cutouts", z=5) {
 
 }
 
-module MegaWithLCDFrame(cutouts=false) {
+module MegaWithLCDFrame(cutouts=false, pot_cutout=true) {
     hole_pts=[
         [13.97, 2.54],
         [66.04, 7.62],
@@ -183,7 +183,11 @@ module MegaWithLCDFrame(cutouts=false) {
                 // screen
                 linear_extrude(mega_and_screen_height) polygon(points=screen_pts);
                 // brightness pot
-                translate(pot_pt) cylinder_outer(mega_and_screen_height, 1.5);
+                if (pot_cutout)
+                {
+                    translate(pot_pt) cylinder_outer(mega_and_screen_height, 1.5);
+                }
+
                 // usb port
                 translate([
                     -20,
@@ -240,7 +244,7 @@ module push_fit_tab() {
     ]) rotate([90,0,0]) linear_extrude(z) polygon(points=xy_pts);
 }
 
-module mega_ext_case(mode="lower_half") {
+module mega_ext_case(mode="lower_half", pot_cutout=true) {
     mega_case_tran=[
         -mega_case_dimensions.x/2,
         -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness) - 20,
@@ -413,7 +417,7 @@ module mega_ext_case(mode="lower_half") {
                     ]) LCDButtonCutouts("guides", z=button_guide_z);
                 }
             // the mega screen and brightness adjuster
-            translate([0,0,25]) mirror([0,0,0]) rotate([0,180,0]) MegaWithLCDFrame(cutouts=true);
+            translate([0,0,25]) mirror([0,0,0]) rotate([0,180,0]) MegaWithLCDFrame(cutouts=true, pot_cutout=pot_cutout);
             // button cutouts
             translate([
                 button_tran_xy.x,
@@ -424,12 +428,6 @@ module mega_ext_case(mode="lower_half") {
         }
     }
 }
-
-translate([
-    65,
-    -50,
-    0
-]) mega_ext_case("lid");
 
 module 40mm_fan_cutout(length=10) {
     holes_dz=32;
@@ -805,6 +803,12 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
 
 // !BlankFacePlate();
 
-FrontPart();
+// FrontPart();
+
+! translate([
+    65,
+    -50,
+    0
+]) mega_ext_case("lid", pot_cutout=false);
 
 // translate([0, 80, 0]) InternalTopPart();

@@ -1,6 +1,6 @@
 include <common.scad>
 
-module JSTSMPanelCutout(circuits=2, panel_thickness=1.4, clearance=clearance_tight, thickness_clearance=0) {
+module JSTSMPanelCutout(circuits=2, panel_thickness=1.4, clearance=0, thickness_clearance=0) {
     // https://cdn-shop.adafruit.com/datasheets/JSTSM.pdf
     // indexed by circuit count starting at 0
     assert(circuits >= 2 && circuits <= 12);
@@ -59,7 +59,7 @@ difference() {
             0,
             5
         ]) {
-            rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
+            rotate([90,0,0]) JSTSMPanelCutout(5, panel_thickness=panel_thickness);
             translate([0,0,15]) rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
 
             translate([
@@ -68,26 +68,27 @@ difference() {
                 0
             ]) {
                 translate([0,0,0]) rotate([90,0,0]) JSTSMPanelCutout(5, panel_thickness=panel_thickness);
-                translate([0,0,15]) rotate([90,0,0]) JSTSMPanelCutout(5, panel_thickness=panel_thickness);
+                translate([0,0,15]) rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
             }
         }
 
         translate([
             25,
             0,
-            5
+            10
         ]) {
             translate([0,0,15]) rotate([90,0,0]) JSTSMPanelCutout(6, panel_thickness=panel_thickness);
         }
     }
 
     // power
+    // select https://www.bunnings.com.au/epa-16mm-nylon-cable-gland_p4420402
     translate([
         25,
         additional_padding + panel_thickness,
-        15
+        19
     ]) {
-        rotate([90,0,0]) cylinder_outer(panel_thickness, (8/2) + clearance_loose);
+        rotate([90,0,0]) cylinder_outer(panel_thickness, (16/2) + clearance_loose);
     }
 
     // fan switch
