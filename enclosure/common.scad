@@ -6,6 +6,12 @@ clearance_loose=0.4;
 clearance_tight=0.2;
 corner_rad=3;
 
+transition_wedge_dim=[
+    121.5,
+    2,
+    64
+];
+
 ext_transition_dim=[
     114,
     3,
@@ -40,11 +46,6 @@ module multiHull(){
 }
 
 module BlankFacePlate() {
-    transition_wedge_dim=[
-        121.5,
-        2,
-        64
-    ];
     transition_wedge_tran=[
         0,
         transition_wedge_dim.y / 2,

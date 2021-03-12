@@ -599,6 +599,18 @@ module FrontPart() {
             0,
             35
         ]) 40mm_fan_cutout();
+        // fan clearance
+        fan_clearance = [
+            50,
+            4,
+            50
+        ];
+        translate([
+            -25,
+            -transition_wedge_dim.y,
+            35
+        ]) cube(fan_clearance, center=true);
+        // everything under z-0
         cube_mask_dim=[200, 200, 10];
         translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
         // holes underneath for feet
@@ -795,4 +807,4 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
 
 FrontPart();
 
-translate([0, 80, 0]) InternalTopPart();
+// translate([0, 80, 0]) InternalTopPart();
