@@ -553,6 +553,20 @@ module ext_tran_pad() {
 }
 
 
+case_front_holes_t_y=transition_wedge_dim.y+23.5;
+case_holes_dx=100;
+case_rear_holes_t_y=case_front_holes_t_y+65;
+case_hole_dim=2;
+
+
+holes_faceplate_tran=[
+    24 - (transition_wedge_dim.x - case_holes_dx)/2,
+    0,
+    0
+];
+
+echo("holes_faceplate_tran", holes_faceplate_tran);
+
 
 module FrontPart() {
     difference() {
@@ -599,7 +613,7 @@ module FrontPart() {
     }
 
     // bottom part which holds various PCBs
-    difference() {
+    translate(holes_faceplate_tran) difference() {
         union() {
             multiHull() {
                 rhs_case_holes();
@@ -610,7 +624,11 @@ module FrontPart() {
             }
 
             multiHull() {
-                int_tran_floor();
+                translate([
+                    -holes_faceplate_tran.x,
+                    holes_faceplate_tran.y,
+                    holes_faceplate_tran.z,
+                ]) int_tran_floor();
                 rhs_case_holes(rear=false);
                 lhs_case_holes(rear=false);
             }
@@ -635,89 +653,6 @@ module FrontPart() {
     }
 }
 
-
-module InternalTopPart() {
-    gps_ant_width=25.60;
-    // upper ULN2003Board
-    uln2003_tran=[42,41.5,0];
-    uln2003_rot=[0,0,180];
-    difference() {
-        union() {
-            multiHull() {
-                rhs_case_holes();
-            }
-
-            multiHull() {
-                lhs_case_holes();
-            }
-
-            multiHull() {
-                rhs_case_holes(rear=false);
-                lhs_case_holes(rear=false);
-            }
-
-            multiHull() {
-                rhs_case_holes(front=false);
-                lhs_case_holes(front=false);
-            }
-
-            //brackets to hold the GPS antenna
-            gps_bracket_dx=case_holes_dx-3;
-            gps_bracket_y=5;
-            gps_bracket_z=5;
-            gps_bracket_ty=case_rear_holes_t_y-8;
-
-            translate([
-                -gps_bracket_dx/2,
-                gps_bracket_ty,
-                min_thickness
-            ]) hull() {
-                cube();
-                translate([0, 0, 0]) cube([
-                    gps_bracket_dx,
-                    gps_bracket_y,
-                    gps_bracket_z
-                ]);
-            }
-
-            translate([
-                -gps_bracket_dx/2,
-                gps_bracket_ty-gps_ant_width-gps_bracket_y,
-                min_thickness
-            ]) hull() {
-                cube();
-                translate([0, 0, 0]) cube([
-                    gps_bracket_dx,
-                    gps_bracket_y,
-                    gps_bracket_z
-                ]);
-            }
-            //screw holes for GPS module
-            gps_screw_hole_dist=20.6;
-            // doughnut(height,outer_radius,inner_radius,center=true, fn=fn){
-            hole_dia=2.5;
-            gps_post_z=gps_bracket_z + 4;
-            translate([
-                case_holes_dx/2,
-                50,
-            gps_post_z/2+min_thickness-de_minimus
-            ]) {
-                doughnut(gps_post_z,hole_dia*1.5,hole_dia/2,center=true);
-                translate([0,gps_screw_hole_dist,0]) doughnut(gps_post_z,hole_dia*1.5,hole_dia/2,center=true);
-            }
-            //second, upper TMC22xx driver board
-            translate([-43.5,35.5,0]) MotorControlBoard(gps_bracket_z);
-            translate(uln2003_tran) rotate(uln2003_rot) ULN2003Board();
-        }
-        lhs_case_holes(true);
-        rhs_case_holes(true);
-    }
-}
-
-case_front_holes_t_y=transition_wedge_dim.y+23.5;
-case_holes_dx=100;
-case_rear_holes_t_y=case_front_holes_t_y+65;
-case_hole_dim=2;
 
 module rhs_case_holes(cutouts_only=false, front=true, rear=true) {
     t1 = [
