@@ -244,11 +244,23 @@ module push_fit_tab() {
     ]) rotate([90,0,0]) linear_extrude(z) polygon(points=xy_pts);
 }
 
+case_tran_adj = [
+    0,
+    0,
+    -6
+];
+
+feet_hole_pad_tran = [
+    0,
+    -65 + case_tran_adj.y,
+    0
+];
+
 module mega_ext_case(mode="lower_half", pot_cutout=true) {
     mega_case_tran=[
-        -mega_case_dimensions.x/2,
-        -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness) - 20,
-        (sin(mega_rot) * mega_case_dimensions.y + 0.75 * min_thickness) - mega_case_dimensions.z - 6,
+        -mega_case_dimensions.x/2 + case_tran_adj.x,
+        -(cos(mega_rot) * mega_case_dimensions.y + 1 * min_thickness) + case_tran_adj.y,
+        (sin(mega_rot) * mega_case_dimensions.y + 0.75 * min_thickness) - mega_case_dimensions.z + case_tran_adj.z,
     ];
 
     case_position_tran=[
@@ -357,18 +369,11 @@ module mega_ext_case(mode="lower_half", pot_cutout=true) {
             difference() {
                 union() {
                     lid_thickness=2.3;
-                    // union() {
                         roundedBox([
                             mega_case_dimensions.x,
                             mega_case_dimensions.y,
                             lid_thickness
                         ], corner_rad, true);
-                        // roundedBox([
-                        //     mega_case_dimensions.x - 20,
-                        //     mega_case_dimensions.y - 20,
-                        //     lid_thickness
-                        // ], corner_rad, true);
-                    // }
                     translate([
                         -mega_case_dimensions.x  / 2 + min_thickness + clearance_loose,
                         0,
@@ -519,10 +524,6 @@ transition_floor_tran=[
     0
 ];
 
-//translate(transition_floor_tran) cube(transition_floor_dim, center=true);
-
-
-
 int_transition_dim=[
     119.6,
     2,
@@ -538,13 +539,12 @@ module int_tran_floor() {
     translate(int_transition_tran) cube(int_transition_dim, center=true);
 }
 
-
 module ext_tran_pad() {
     resize_x=40;
     translate([
         ext_transition_tran.x + resize_x,
         ext_transition_tran.y - ext_transition_dim.y / 2 + de_minimus / 2,
-        ext_transition_tran.z
+        ext_transition_tran.z + faceplate_pillar_tran.z
     ]) cube([
         resize_x,
         de_minimus,
@@ -552,13 +552,13 @@ module ext_tran_pad() {
     ], center=true);
 }
 
+
+
 module FrontPart() {
     difference() {
         // shield, external interface, bridge and case
         union() {
             mega_ext_case();
-            // #translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
-            // ext_tran_shield();
             BlankFacePlate();
             difference() {
                 union() {
@@ -567,10 +567,7 @@ module FrontPart() {
                         mega_ext_case("pad");
                     }
                     hull() {
-                        translate([
-                            0,
-                            -83.5,
-                        0]) roundedBox([
+                        translate(feet_hole_pad_tran) roundedBox([
                             mega_case_dimensions.x,
                             15,
                             de_minimus
@@ -583,47 +580,25 @@ module FrontPart() {
         }
         // internal tunnel
         translate([
-            35,
+            40,
             10,
-            38
+            48
         ]) rotate([
-            78,
+            89,
             0,
             0
-        ]) cylinder_outer(90, 13);
-        // fan mount
-        translate([
-            -25,
-            0,
-            35
-        ]) 40mm_fan_cutout();
-        // fan clearance
-        fan_clearance = [
-            50,
-            4,
-            50
-        ];
-        translate([
-            -25,
-            -transition_wedge_dim.y,
-            35
-        ]) cube(fan_clearance, center=true);
+        ]) cylinder_outer(35, 14);
         // everything under z-0
-        cube_mask_dim=[200, 200, 10];
+        cube_mask_dim=[200, 200, 7.6];
         translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
         // holes underneath for feet
-        translate([
-            0,
-            -83.5,
-            0
-        ]) {
+        translate(feet_hole_pad_tran) {
             translate([-57,0,0]) cylinder_outer(4, 2.5/2);
             translate([57,0,0]) cylinder_outer(4, 2.5/2);
         }
     }
 
     // bottom part which holds various PCBs
-    term_block_tran = [5,45,0];
     difference() {
         union() {
             multiHull() {
@@ -639,19 +614,24 @@ module FrontPart() {
                 rhs_case_holes(rear=false);
                 lhs_case_holes(rear=false);
             }
-            translate([15,7,0]) ULN2003Board();
-            translate([-43.5,35.5,0]) MotorControlBoard();
-            translate(term_block_tran) TerminalBlock(4);
-            foo=80;
-            translate([
-                term_block_tran.x - foo / 2 - 2.5,
-                term_block_tran.y,
-                term_block_tran.z
-            ]) cube([foo, 10, 2.4]);
+            translate([18.5,18,0]) ULN2003Board();
+            translate([-52,18,0]) ULN2003Board();
+            // rail to take up fourth leg of uln boards
+            translate([-50,43.5,0]) cube([100, 6, 2.4]);
+
+            mcb_y=65;
+            translate([-5,mcb_y,0]) rotate([0,0,90]) MotorControlBoard();
+            translate([45,mcb_y,0]) rotate([0,0,90]) MotorControlBoard();
+            // rail that motor control boards sit on
+            translate([-50,mcb_y + 0.5,0]) cube([100, 6, 2.4]);
+
+            // uart breakout
+            // module doughnut(height,outer_radius,inner_radius,center=true, fn=fn){
+            translate([-10,15,5/2+2.4-de_minimus]) doughnut(5, 6/2, 2.4/2);
+            // #translate([-27/2,20,0]) cube([27, 27, 2.4]);
         }
         lhs_case_holes(true);
         rhs_case_holes(true);
-        translate(term_block_tran) TerminalBlock(4, cutout_only=true);
     }
 }
 
@@ -734,9 +714,9 @@ module InternalTopPart() {
     }
 }
 
-case_front_holes_t_y=2+16;
-case_holes_dx=80;
-case_rear_holes_t_y=2+16+60;
+case_front_holes_t_y=transition_wedge_dim.y+23.5;
+case_holes_dx=100;
+case_rear_holes_t_y=case_front_holes_t_y+65;
 case_hole_dim=2;
 
 module rhs_case_holes(cutouts_only=false, front=true, rear=true) {
@@ -803,14 +783,14 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
 
 // !BlankFacePlate();
 
-// FrontPart();
+FrontPart();
 
-/*translate([
-    65,
-    -50,
-    0
-]) mega_ext_case("lid", pot_cutout=false);
-*/
-mirror([1,0,0]) translate([0, 80, 0]) InternalTopPart();
+// translate([
+//     65,
+//     -50,
+//     0
+// ]) mega_ext_case("lid", pot_cutout=false);
+
+// mirror([1,0,0]) translate([0, 80, 0]) InternalTopPart();
 
 //translate([0, 80, 0]) InternalTopPart();

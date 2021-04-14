@@ -5,23 +5,37 @@ de_minimus=0.01;
 clearance_loose=0.4;
 clearance_tight=0.2;
 corner_rad=3;
+tran_wedge_x_tran=3.4;
+tran_wedge_y_tran=2.8;
 
 transition_wedge_dim=[
-    121.5,
-    2,
-    64
+    251/2,
+    2.4,
+    75
 ];
 
 ext_transition_dim=[
-    114,
-    3,
-    57
+    transition_wedge_dim.x - tran_wedge_x_tran * 2,
+    4.5,
+    transition_wedge_dim.z - tran_wedge_y_tran * 2
 ];
 
 ext_transition_tran=[
     0,
     - ext_transition_dim.y / 2,
-    57 / 2
+    ext_transition_dim.z / 2 + tran_wedge_y_tran
+];
+
+transition_wedge_tran=[
+    0,
+    transition_wedge_dim.y / 2,
+    transition_wedge_dim.z / 2
+];
+
+faceplate_pillar_tran=[
+    0,
+    0,
+    -7.6
 ];
 
 module cylinder_outer(height,radius,center=false, fn=fn){
@@ -46,11 +60,8 @@ module multiHull(){
 }
 
 module BlankFacePlate() {
-    transition_wedge_tran=[
-        0,
-        transition_wedge_dim.y / 2,
-        transition_wedge_dim.z / 2 - 3
-    ];
-    translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
-    translate(ext_transition_tran) cube(ext_transition_dim, center=true);
+    translate(faceplate_pillar_tran) {
+        translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
+        translate(ext_transition_tran) cube(ext_transition_dim, center=true);
+    }
 }
