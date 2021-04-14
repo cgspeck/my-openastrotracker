@@ -573,7 +573,7 @@ module FrontPart() {
         // shield, external interface, bridge and case
         union() {
             mega_ext_case();
-            BlankFacePlate();
+            BlankFacePlate(overlap=true);
             difference() {
                 union() {
                     hull() {

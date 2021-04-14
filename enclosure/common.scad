@@ -59,9 +59,21 @@ module multiHull(){
     }
 }
 
-module BlankFacePlate() {
+module BlankFacePlate(overlap=false) {
+    overlap_adj_x = overlap ?
+        tran_wedge_x_tran * 2 - clearance_loose:
+        0;
+
     translate(faceplate_pillar_tran) {
         translate(transition_wedge_tran) cube(transition_wedge_dim, center=true);
-        translate(ext_transition_tran) cube(ext_transition_dim, center=true);
+        translate([
+            ext_transition_tran.x + (overlap_adj_x / 2),
+            ext_transition_tran.y,
+            ext_transition_tran.z
+        ]) cube([
+            ext_transition_dim.x + overlap_adj_x,
+            ext_transition_dim.y,
+            ext_transition_dim.z
+        ], center=true);
     }
 }
