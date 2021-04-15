@@ -8,8 +8,11 @@ corner_rad=3;
 tran_wedge_x_tran=3.4;
 tran_wedge_y_tran=2.8;
 
+// 248 top/bottom
+// 250 flare in middle
+
 transition_wedge_dim=[
-    251/2,
+    248/2,
     2.4,
     75
 ];

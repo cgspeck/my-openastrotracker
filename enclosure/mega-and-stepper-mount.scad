@@ -716,7 +716,7 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
 
 // // !mega_ext_case("lid");
 
-// !BlankFacePlate();
+// !BlankFacePlate(true);
 
 FrontPart();
 
