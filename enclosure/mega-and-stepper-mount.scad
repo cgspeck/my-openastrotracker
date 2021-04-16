@@ -601,7 +601,7 @@ module FrontPart() {
             89,
             0,
             0
-        ]) cylinder_outer(35, 14);
+        ]) scale([1.3,0.95,1]) cylinder_outer(35, 14);
         // everything under z-0
         cube_mask_dim=[200, 200, 7.6];
         translate([0,0,-cube_mask_dim.z/2]) cube(cube_mask_dim, center=true);
