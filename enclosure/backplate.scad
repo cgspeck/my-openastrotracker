@@ -39,10 +39,11 @@ difference() {
     BlankFacePlate();
     panel_thickness=1.2;
     additional_padding=2-panel_thickness;
+    foo_y=0.40;
     translate([
         ext_transition_tran.x,
-        ext_transition_tran.y,
-        ext_transition_tran.z,
+        ext_transition_tran.y + foo_y,
+        ext_transition_tran.z - 8,
     ]) cube([
         ext_transition_dim.x-10,
         ext_transition_dim.y + (additional_padding * 2),
@@ -51,7 +52,7 @@ difference() {
 
     translate([
         0,
-        additional_padding + panel_thickness / 2,
+        additional_padding + panel_thickness / 2 + foo_y,
         15
     ]) {
         translate([
@@ -85,18 +86,18 @@ difference() {
     // select https://www.bunnings.com.au/epa-16mm-nylon-cable-gland_p4420402
     translate([
         25,
-        additional_padding + panel_thickness,
+        additional_padding + panel_thickness + foo_y,
         19
     ]) {
         rotate([90,0,0]) cylinder_outer(panel_thickness, (16/2) + clearance_loose);
     }
 
     // fan switch
-    translate([
-        -28,
-        additional_padding + panel_thickness,
-        45
-    ]) {
-        rotate([90,0,0]) cylinder_outer(panel_thickness, (4.72/2) + clearance_loose);
-    }
+    // translate([
+    //     -28,
+    //     additional_padding + panel_thickness,
+    //     45
+    // ]) {
+    //     rotate([90,0,0]) cylinder_outer(panel_thickness, (4.72/2) + clearance_loose);
+    // }
 }

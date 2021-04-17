@@ -718,13 +718,13 @@ module lhs_case_holes(cutouts_only=false, front=true, rear=true) {
 
 // !BlankFacePlate(true);
 
-FrontPart();
+// FrontPart();
 
-// translate([
-//     65,
-//     -50,
-//     0
-// ]) mega_ext_case("lid", pot_cutout=false);
+translate([
+    65,
+    -50,
+    0
+]) mega_ext_case("lid", pot_cutout=false);
 
 // mirror([1,0,0]) translate([0, 80, 0]) InternalTopPart();
 
