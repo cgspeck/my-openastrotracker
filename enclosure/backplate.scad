@@ -36,7 +36,7 @@ module JSTSMPanelCutout(circuits=2, panel_thickness=1.4, clearance=0, thickness_
 }
 
 difference() {
-    BlankFacePlate();
+    BlankFacePlate(true);
     panel_thickness=1.2;
     additional_padding=2-panel_thickness;
     foo_y=0.40;
@@ -50,18 +50,20 @@ difference() {
         ext_transition_dim.z-10
     ], center=true);
 
+    top_level_z_tran=20;
+
     translate([
         0,
         additional_padding + panel_thickness / 2 + foo_y,
         15
     ]) {
-        translate([
+       translate([
             -40,
             0,
             5
         ]) {
             rotate([90,0,0]) JSTSMPanelCutout(5, panel_thickness=panel_thickness);
-            translate([0,0,15]) rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
+            translate([0,0,top_level_z_tran]) rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
 
             translate([
                 25,
@@ -69,7 +71,7 @@ difference() {
                 0
             ]) {
                 translate([0,0,0]) rotate([90,0,0]) JSTSMPanelCutout(5, panel_thickness=panel_thickness);
-                translate([0,0,15]) rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
+                translate([0,0,top_level_z_tran]) rotate([90,0,0]) JSTSMPanelCutout(4, panel_thickness=panel_thickness);
             }
         }
 
